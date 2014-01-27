@@ -1,0 +1,15 @@
+{
+  "name": "gulp-cascade",
+  "version": "0.0.0",
+  "description": "Run other gulpfiles from within a gulpfile.",
+  "main": "index.js",
+  "keywords": [
+    "gulpplugin",
+    "inception",
+    "hub",
+    "cascade",
+    "domino"
+  ],
+  "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
+  "license": "MIT"
+}
