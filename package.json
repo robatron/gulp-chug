@@ -18,6 +18,8 @@
     "through2": "~0.4.1",
     "gulp-util": "~2.2.13",
     "gulp": "~3.4.0",
-    "pretty-hrtime": "~0.2.0"
+    "pretty-hrtime": "~0.2.0",
+    "resolve": "~0.6.1",
+    "semver": "~2.2.1"
   }
 }
