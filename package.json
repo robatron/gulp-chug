@@ -1,15 +1,15 @@
 {
-  "name": "gulp-cascade",
-  "version": "0.0.0",
-  "description": "Run other gulpfiles from within a gulpfile.",
+  "name": "gulp-chug",
+  "version": "0.0.1",
+  "description": "Run gulpfiles as part of gulp tasks inside other gulpfiles.",
   "main": "index.js",
   "keywords": [
     "gulpplugin",
-    "inception",
     "hub",
+    "nest",
+    "inception",
     "cascade",
-    "domino",
-    "nest"
+    "domino"
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
   "license": "MIT",
