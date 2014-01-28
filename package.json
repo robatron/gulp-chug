@@ -8,8 +8,16 @@
     "inception",
     "hub",
     "cascade",
-    "domino"
+    "domino",
+    "nest"
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "~2.4.1",
+    "through2": "~0.4.1",
+    "gulp-util": "~2.2.13",
+    "gulp": "~3.4.0",
+    "pretty-hrtime": "~0.2.0"
+  }
 }

@@ -1,23 +1,66 @@
 var util        = require( 'util' );
+var fs          = require( 'fs' );
 var path        = require( 'path' );
 var exec        = require( 'child_process' ).exec;
 
 var _           = require( 'lodash' );
 var through     = require( 'through2' );
 var gutil       = require( 'gulp-util' );
+var prettyTime  = require( 'pretty-hrtime' );
 var PluginError = gutil.PluginError;
 
 
 // Name of this plugin
 const PLUGIN_NAME   = require( './package.json' ).name;
 
-// Name the gulpfile must be for gulp to run it
-const DEFAULT_GULPFILE_NAME = 'gulpfile.js';
 
-// Gulp-log with plugin-name prefix
+// Logging
+// =======
 var say = function( msg ) {
-    gutil.log( PLUGIN_NAME + ':', msg );
+    gutil.log( util.format( '[%s] ', gutil.colors.green( PLUGIN_NAME ) ), msg );
 };
+
+var sayErr = function( errMsg ) {
+    self.emit( 'error', new PluginError( PLUGIN_NAME, errMsg ) );
+}
+
+// format orchestrator errors
+var formatError = function ( e ) {
+  if ( !e.err ) return e.message;
+  if ( e.err.message ) return e.err.message;
+  return JSON.stringify( e.err );
+}
+
+// Logging events
+var logEvents = function ( gulp ) {
+    gulp.on( 'task_start', function( e ) {
+        say( util.format( 'Running "%s"...', gutil.colors.cyan( e.task ) ) );
+    } );
+
+    gulp.on( 'task_stop', function( e ) {
+        var time = prettyTime( e.hrDuration );
+        say( util.format(
+            'Finished "%s" in %s', gutil.colors.cyan(e.task),
+            gutil.colors.magenta(time)
+        ) );
+    } );
+
+    gulp.on( 'task_err', function( e ) {
+        var msg     = formatError( e );
+        var time    = prettyTime( e.hrDuration );
+        say( util.format(
+            'Errored "%s" in %s %s', gutil.colors.cyan( e.task ),
+            gutil.colors.magenta( time ), gutil.colors.red( msg )
+        ) );
+    } );
+
+    gulp.on( 'task_not_found', function( err ){
+        say( gutil.colors.red( util.format(
+            'Task "%s" was not found in the gulpfile.', err.task
+        ) ) );
+        process.exit( 1 );
+    });
+}
 
 
 // Primary gulp function
@@ -25,71 +68,80 @@ module.exports = function ( options ) {
 
     // Set default options
     var opts = _.assign( {
-        nodeCmd: null, // TODO: Implement custom node/gulp commands
-        gulpCmd: null,
-        gulpOpts: []
+        tasksToRun: [ 'default' ]
     }, options );
 
 
     // Create and return a stream through which each file will pass
     return through.obj( function ( file, enc, callback ) {
 
-        // Reference to through object for closures during execution
         var self = this;
 
-        // Since we're not modifying the gulpfile, immediately always push it
-        // back on the stream
+
+        // Push unmodified gulpfile back onto stream for next plugin(s) since
+        // we're not modifying it
         self.push( file );
 
+
+        // Error if file contents is stream ( { buffer: false } in gulp.src )
+        // TODO: Add support for a stream later
+        if ( file.isStream() ) {
+            sayErr( 'Streams are not supported at this time. Sorry!' );
+            return callback();
+        }
+
+
         // Gather gulpfile info
-        var gulpfilePath    = file.path;
-        var gulpfilePathRel = path.relative( process.cwd(), gulpfilePath );
-        var gulpfileDir     = file.base;
-        var gulpfileDirRel  = path.relative( process.cwd(), gulpfileDir );
-        var gulpfileName    = path.basename( gulpfilePath );
-
-        // Construct command to execute
-        var cmd = [
-            'gulp',
-            '--gulpfile', gulpfileName,
-            opts.gulpOpts.join( ' ' )
-        ].join( ' ' );
+        var gulpfile = {};
+        gulpfile.path       = file.path;
+        gulpfile.relPath    = path.relative( process.cwd(), gulpfile.path );
+        gulpfile.base       = file.base;
+        gulpfile.relBase    = path.relative( process.cwd(), gulpfile.base );
+        gulpfile.name       = path.basename( gulpfile.path );
+        gulpfile.ext        = path.extname( gulpfile.name );
 
 
-        // Tell user what we're about to do
-        say( util.format(
-            'Forking new process to run "%s" in directory "%s"...',
-            cmd,
-            gulpfileDirRel
-        ) );
+        // If file contents is null, { read: false }, just execute file as-is
+        // on disk
+        // TODO: Implement
+        if( file.isNull() ){
+            say( util.format(
+                'Gulpfile, %s, contents is empty. Reading directly from disk...',
+                gulpfile.name
+            ) );
+        }
 
 
-        // Execute gulp command
-        exec( cmd, { cwd: gulpfileDir }, function ( err, stdout, stderr ) {
+        // If file contents is a buffer, write a temp file and run that instead
+        if( file.isBuffer() ) {
 
-            // Report if there's an error
-            if ( err ){
-                var errMsg = util.format(
-                    'Error executing gulpfile "%s":\n%s',
-                    gulpfilePathRel,
-                    stderr
-                );
-                self.emit( 'error', new PluginError( PLUGIN_NAME, errMsg ) );
+            var tmpGulpfileName = util.format(
+                '%s.tmp.%s%s',
+                path.basename( gulpfile.name, gulpfile.ext ),
+                new Date().getTime(),
+                gulpfile.ext
+            );
+
+            say( util.format(
+                'Gulpfile "%s" contents is a buffer. Writing to temp file "%s" before reading...',
+                gulpfile.name, tmpGulpfileName
+            ) );
+
+            // Tweak gulpfile info to account for temp file
+            gulpfile.path    = path.join( gulpfile.base, tmpGulpfileName );
+            gulpfile.relPath = path.relative( process.cwd(), gulpfile.path );
+            gulpfile.name    = tmpGulpfileName;
+
+            // Write tmp file to disk
+            fs.writeFileSync( gulpfile.path, file.contents );
+        }
 
 
-            // Otherwise, report output from gruntfile
-            } else {
-                var stdoutLines = stdout.split( gutil.linefeed );
-                for( var i = 0; i < stdoutLines.length; ++i ) {
-                    gutil.log( util.format(
-                        '%s: (%s) %s',
-                        PLUGIN_NAME,
-                        gulpfilePathRel,
-                        stdoutLines[ i ]
-                    ) );
-                }
-            }
-        } );
+        // Cleanup temp file
+        if( file.isBuffer() ){
+            say( util.format( 'Cleaning up temp file "%s"...', gulpfile.relPath ) );
+            fs.unlinkSync( gulpfile.path );
+        }
 
 
         // TODO: Make this sync so it doesn't return immediately?
