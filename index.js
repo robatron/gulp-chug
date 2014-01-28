@@ -1,14 +1,12 @@
 var util        = require( 'util' );
-var fs          = require( 'fs' );
 var path        = require( 'path' );
+var fs          = require( 'fs' );
 var exec        = require( 'child_process' ).exec;
 
 var _           = require( 'lodash' );
 var through     = require( 'through2' );
-var gutil       = require( 'gulp-util' );
-var prettyTime  = require( 'pretty-hrtime' );
 var resolve     = require( 'resolve' );
-var semver      = require( 'semver' );
+var gutil       = require( 'gulp-util' );
 var PluginError = gutil.PluginError;
 
 
@@ -16,116 +14,40 @@ var PluginError = gutil.PluginError;
 const PLUGIN_NAME   = require( './package.json' ).name;
 
 
-// Helpers
-// =======
-
-// Logging
-// -------
-var say = function( msg ) {
-    gutil.log( util.format( '%s:', gutil.colors.green( PLUGIN_NAME ) ), msg );
-};
-
-var sayErr = function( errMsg ) {
-    self.emit( 'error', new PluginError( PLUGIN_NAME, errMsg ) );
-}
-
-// format orchestrator errors
-var formatError = function ( e ) {
-  if ( !e.err ) return e.message;
-  if ( e.err.message ) return e.err.message;
-  return JSON.stringify( e.err );
-}
-
-// Logging events
-var logEvents = function ( gulp ) {
-
-    gulp.on( 'task_start', function( e ) {
-        say( util.format( 'Running \'%s\'...', gutil.colors.cyan( e.task ) ) );
-    } );
-
-    gulp.on( 'task_stop', function( e ) {
-        var time = prettyTime( e.hrDuration );
-        say( util.format(
-            'Finished \'%s\' in %s', gutil.colors.cyan(e.task),
-            gutil.colors.magenta(time)
-        ) );
-    } );
-
-    gulp.on( 'task_err', function( e ) {
-        var msg     = formatError( e );
-        var time    = prettyTime( e.hrDuration );
-        say( util.format(
-            'Errored \'%s\' in %s %s', gutil.colors.cyan( e.task ),
-            gutil.colors.magenta( time ), gutil.colors.red( msg )
-        ) );
-    } );
-
-    gulp.on( 'task_not_found', function( err ){
-        say( gutil.colors.red( util.format(
-            'Task \'%s\' was not found in the gulpfile.', err.task
-        ) ) );
-        process.exit( 1 );
-    });
-}
-
-
-// Module finders
-// --------------
-var findLocalModule = function( modName, baseDir ) {
-    try {
-        return require( resolve.sync( modName, { basedir: baseDir } ) );
-    } catch( e ) {}
-    return;
-}
-
-var findLocalGulp = function( gulpFile ) {
-    var baseDir = path.resolve( path.dirname( gulpFile ) );
-    return findLocalModule( 'gulp', baseDir );
-}
-
-
-// Gulp runners
-// ------------
-function startGulp( localGulp, tasks ) {
-  // impose our opinion of "default" tasks onto orchestrator
-  var toRun = tasks.length ? tasks : [ 'default' ];
-  return localGulp.start.apply( localGulp, toRun );
-}
-
-function loadGulpFile( localGulp, gulpFile, tasks ){
-
-    // Fill the gulp singleton with the tasks of the gulpfile
-    var theGulpfile = require( gulpFile );
-
-    startGulp( localGulp, tasks );
-
-    return theGulpfile;
-}
-
-
-// Gulp Plugin Function
-// ====================
+// Primary gulp function
 module.exports = function ( options ) {
 
     // Set default options
     var opts = _.assign( {
+        nodeCmd: 'node',
         tasks: [ 'default' ]
     }, options );
 
 
-    // Create and return a stream through which each file will pass
+    // Create a stream through which each file will pass
     return through.obj( function ( file, enc, callback ) {
 
+        // Grab reference to this through object
         var self = this;
 
 
-        // Push unmodified gulpfile back onto stream for next plugin(s) since
-        // we're not modifying it
+        // Since we're not modifying the gruntfile, always push it back on the
+        // stream.
         self.push( file );
 
 
+        // Configure logging and errors
+        var say = function( msg ) {
+            gutil.log( util.format( '%s:', gutil.colors.green( PLUGIN_NAME ) ), msg );
+        };
+
+        var sayErr = function( errMsg ) {
+            self.emit( 'error', new PluginError( PLUGIN_NAME, errMsg ) );
+        };
+
+
         // Error if file contents is stream ( { buffer: false } in gulp.src )
-        // TODO: Add support for a stream later
+        // TODO: Add support for a streams
         if ( file.isStream() ) {
             sayErr( 'Streams are not supported at this time. Sorry!' );
             return callback();
@@ -144,7 +66,6 @@ module.exports = function ( options ) {
 
         // If file contents is null, { read: false }, just execute file as-is
         // on disk
-        // TODO: Implement
         if( file.isNull() ){
             say( util.format(
                 'Gulpfile, %s, contents is empty. Reading directly from disk...',
@@ -156,6 +77,8 @@ module.exports = function ( options ) {
         // If file contents is a buffer, write a temp file and run that instead
         if( file.isBuffer() ) {
 
+            say( 'File is a buffer. Need to write buffer to temp file...')
+
             var tmpGulpfileName = util.format(
                 '%s.tmp.%s%s',
                 path.basename( gulpfile.name, gulpfile.ext ),
@@ -164,9 +87,12 @@ module.exports = function ( options ) {
             );
 
             // Tweak gulpfile info to account for temp file
-            gulpfile.path    = path.join( gulpfile.base, tmpGulpfileName );
-            gulpfile.relPath = path.relative( process.cwd(), gulpfile.path );
-            gulpfile.name    = tmpGulpfileName;
+            gulpfile.origPath       = gulpfile.path;
+            gulpfile.path           = path.join( gulpfile.base, tmpGulpfileName );
+            gulpfile.tmpPath        = gulpfile.path;
+            gulpfile.origRelPath    = gulpfile.relPath;
+            gulpfile.relPath        = path.relative( process.cwd(), gulpfile.path );
+            gulpfile.name           = tmpGulpfileName;
 
             say( util.format(
                 'Writing buffer to %s...',
@@ -178,35 +104,61 @@ module.exports = function ( options ) {
         }
 
 
-        // Find the local gulp, error if not found
-        var localGulp = findLocalGulp( gulpfile.path );
-
-        if ( !localGulp ) {
-            sayErr(
-                gutil.colors.red( 'No local gulp install found in' ) + ' ' +
-                gutil.colors.magenta( gulpfile.relPath )
-            );
+        // Find local gulp cli script
+        try {
+            var localGulpPackageBase    = path.dirname( resolve.sync( 'gulp', { basedir: gulpfile.base } ) );
+            var localGulpPackage        = require( path.join( localGulpPackageBase, 'package.json' ) );
+            var localGulpCliPath        = path.resolve( path.join( localGulpPackageBase, localGulpPackage.bin.gulp ) );
+        } catch( e ) {
+            sayErr( util.format(
+                'Unable to find local gulp. Try running \'npm install gulp\' from %s.',
+                gulpfile.base
+            ) );
             return callback();
         }
 
 
-        // Wire up logging for tasks on local gulp singleton
-        logEvents( localGulp );
+        // Construct gulp command
+        var cmd = [
+            opts.nodeCmd,
+            localGulpCliPath,
+            '--gulpfile', gulpfile.name,
+            opts.tasks.join( ' ' )
+        ].join( ' ' );
 
 
-        // Load the gulpfile and run it
-        say( util.format( 'Using file %s', gutil.colors.magenta( gulpfile.relPath ) ) );
-        loadGulpFile( localGulp, gulpfile.path, opts.tasks );
+        say( 'Running command \'' + cmd + '\'...');
 
 
-        // Cleanup temp file
-        if( file.isBuffer() ){
-            say( util.format( 'Cleaning up temp file "%s"...', gulpfile.relPath ) );
-            fs.unlinkSync( gulpfile.path );
-        }
+        // Execute local gulp cli script
+        exec( cmd, { cwd: gulpfile.base }, function ( err, stdout, stderr ) {
+
+            // Log output from gulpfile
+            if ( ! err ) {
+                var stdoutLines = stdout.split( gutil.linefeed );
+                for( var i = 0; i < stdoutLines.length; ++i ) {
+                    say( util.format( '(%s) %s',
+                        gutil.colors.magenta( gulpfile.relPath ),
+                        stdoutLines[ i ]
+                    ) );
+                }
+
+            } else {
+                sayErr( 'Error executing gulpfile: ' + stderr );
+            }
 
 
-        // TODO: Make this sync so it doesn't return immediately?
-        return callback();
-    });
+            // Remove temp file if one exists
+            if( gulpfile.tmpPath ) {
+                say( util.format( 'Removing temp file %s', gulpfile.tmpPath ) );
+                fs.unlinkSync( gulpfile.tmpPath );
+            }
+
+
+            // Tell gulp (and the user) we're done!
+            say( 'Returning to parent gruntfile...' );
+            callback();
+        } );
+
+    } );
 };
