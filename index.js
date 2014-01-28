@@ -182,7 +182,10 @@ module.exports = function ( options ) {
         var localGulp = findLocalGulp( gulpfile.path );
 
         if ( !localGulp ) {
-            sayErr( gutil.colors.red( 'No local gulp install found in' ), gutil.colors.magenta( gulpfile.relPath ) );
+            sayErr(
+                gutil.colors.red( 'No local gulp install found in' ) + ' ' +
+                gutil.colors.magenta( gulpfile.relPath )
+            );
             return callback();
         }
 
