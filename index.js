@@ -7,6 +7,8 @@ var _           = require( 'lodash' );
 var through     = require( 'through2' );
 var gutil       = require( 'gulp-util' );
 var prettyTime  = require( 'pretty-hrtime' );
+var resolve     = require( 'resolve' );
+var semver      = require( 'semver' );
 var PluginError = gutil.PluginError;
 
 
@@ -14,10 +16,13 @@ var PluginError = gutil.PluginError;
 const PLUGIN_NAME   = require( './package.json' ).name;
 
 
-// Logging
+// Helpers
 // =======
+
+// Logging
+// -------
 var say = function( msg ) {
-    gutil.log( util.format( '[%s] ', gutil.colors.green( PLUGIN_NAME ) ), msg );
+    gutil.log( util.format( '%s:', gutil.colors.green( PLUGIN_NAME ) ), msg );
 };
 
 var sayErr = function( errMsg ) {
@@ -33,14 +38,15 @@ var formatError = function ( e ) {
 
 // Logging events
 var logEvents = function ( gulp ) {
+
     gulp.on( 'task_start', function( e ) {
-        say( util.format( 'Running "%s"...', gutil.colors.cyan( e.task ) ) );
+        say( util.format( 'Running \'%s\'...', gutil.colors.cyan( e.task ) ) );
     } );
 
     gulp.on( 'task_stop', function( e ) {
         var time = prettyTime( e.hrDuration );
         say( util.format(
-            'Finished "%s" in %s', gutil.colors.cyan(e.task),
+            'Finished \'%s\' in %s', gutil.colors.cyan(e.task),
             gutil.colors.magenta(time)
         ) );
     } );
@@ -49,26 +55,61 @@ var logEvents = function ( gulp ) {
         var msg     = formatError( e );
         var time    = prettyTime( e.hrDuration );
         say( util.format(
-            'Errored "%s" in %s %s', gutil.colors.cyan( e.task ),
+            'Errored \'%s\' in %s %s', gutil.colors.cyan( e.task ),
             gutil.colors.magenta( time ), gutil.colors.red( msg )
         ) );
     } );
 
     gulp.on( 'task_not_found', function( err ){
         say( gutil.colors.red( util.format(
-            'Task "%s" was not found in the gulpfile.', err.task
+            'Task \'%s\' was not found in the gulpfile.', err.task
         ) ) );
         process.exit( 1 );
     });
 }
 
 
-// Primary gulp function
+// Module finders
+// --------------
+var findLocalModule = function( modName, baseDir ) {
+    try {
+        return require( resolve.sync( modName, { basedir: baseDir } ) );
+    } catch( e ) {}
+    return;
+}
+
+var findLocalGulp = function( gulpFile ) {
+    var baseDir = path.resolve( path.dirname( gulpFile ) );
+    return findLocalModule( 'gulp', baseDir );
+}
+
+
+// Gulp runners
+// ------------
+function startGulp( localGulp, tasks ) {
+  // impose our opinion of "default" tasks onto orchestrator
+  var toRun = tasks.length ? tasks : [ 'default' ];
+  return localGulp.start.apply( localGulp, toRun );
+}
+
+function loadGulpFile( localGulp, gulpFile, tasks ){
+
+    // Fill the gulp singleton with the tasks of the gulpfile
+    var theGulpfile = require( gulpFile );
+
+    startGulp( localGulp, tasks );
+
+    return theGulpfile;
+}
+
+
+// Gulp Plugin Function
+// ====================
 module.exports = function ( options ) {
 
     // Set default options
     var opts = _.assign( {
-        tasksToRun: [ 'default' ]
+        tasks: [ 'default' ]
     }, options );
 
 
@@ -122,19 +163,37 @@ module.exports = function ( options ) {
                 gulpfile.ext
             );
 
-            say( util.format(
-                'Gulpfile "%s" contents is a buffer. Writing to temp file "%s" before reading...',
-                gulpfile.name, tmpGulpfileName
-            ) );
-
             // Tweak gulpfile info to account for temp file
             gulpfile.path    = path.join( gulpfile.base, tmpGulpfileName );
             gulpfile.relPath = path.relative( process.cwd(), gulpfile.path );
             gulpfile.name    = tmpGulpfileName;
 
+            say( util.format(
+                'Writing buffer to %s...',
+                gutil.colors.magenta( gulpfile.relPath )
+            ) )
+
             // Write tmp file to disk
             fs.writeFileSync( gulpfile.path, file.contents );
         }
+
+
+        // Find the local gulp, error if not found
+        var localGulp = findLocalGulp( gulpfile.path );
+
+        if ( !localGulp ) {
+            sayErr( gutil.colors.red( 'No local gulp install found in' ), gutil.colors.magenta( gulpfile.relPath ) );
+            return callback();
+        }
+
+
+        // Wire up logging for tasks on local gulp singleton
+        logEvents( localGulp );
+
+
+        // Load the gulpfile and run it
+        say( util.format( 'Using file %s', gutil.colors.magenta( gulpfile.relPath ) ) );
+        loadGulpFile( localGulp, gulpfile.path, opts.tasks );
 
 
         // Cleanup temp file
