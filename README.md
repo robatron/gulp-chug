@@ -18,7 +18,7 @@ var chug = require( 'gulp-chug' );
 
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 ```
 
@@ -30,7 +30,7 @@ var chug = require( 'gulp-chug' );
 
 gulp.task( 'default', function () {
     gulp.src( './**/gulpfile.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 ```
 
@@ -40,7 +40,7 @@ Pre-process the gulpfile before running it:
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
         .pipe( replace( 'Hello', 'Goodbye' ) )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 ```
 
@@ -49,7 +49,7 @@ Make gulp-chug a little faster by not reading the source stream with `{ read: fa
 ```javascipt
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js', { read: false } )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 ```
 
