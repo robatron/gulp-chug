@@ -68,8 +68,9 @@ gulp.task( 'default', function () {
 
 ### Make gulp-chug faster by not reading gulpfile contents
 
-If you're only running external gulpfile(s), there's no need to actually read
-their contents. Set `{ read: false }` in `gulp.src`:
+If gulp-chug is the only plugin in the stream, there's no need to actually read
+the contents of the gulpfiles. Set `{ read: false }` in `gulp.src` to speed
+things up:
 
 ```js
 var gulp = require( 'gulp' );
