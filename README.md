@@ -59,7 +59,10 @@ gulp.task( 'default', function () {
 } );
 ```
 
-Make gulp-chug a little faster by not reading the source stream with `{ read: false }`:
+### Make gulp-chug faster by not reading gulpfile contents
+
+If you're only running external gulpfile(s), there's no need to actually read
+their contents. Set `{ read: false }` in `gulp.src`:
 
 ```javascipt
 gulp.task( 'default', function () {
