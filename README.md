@@ -4,9 +4,9 @@ gulp-chug [![NPM version][npm-badge-img]][npm-url]
 > A [gulp][gulp-url] plugin for running external gulpfiles as part of a task inside another gulpfile.
 
 gulp-chug is *non-modifying*, i.e., gulp-chug will not modify streams passed
-through it, but will happily accept and run streams modified by other plugins
-from
-[`gulp.src`](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulpsrcglobs-options).
+through it, but will happily accept and run streams modified by other plugins.
+See [pre-process an external gulpfile before running it](#pre-process-an-external-gulpfile-before-running-it)
+for an example.
 
 Inspired by [shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
 
