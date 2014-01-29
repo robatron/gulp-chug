@@ -1,6 +1,6 @@
 {
   "name": "gulp-chug",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Run external gulpfiles as part of a task inside a gulpfile",
   "repository": "https://github.com/robatron/gulp-chug.git",
   "main": "index.js",
