@@ -27,7 +27,7 @@ Usage
 
 Run one external gulpfile:
 
-```javascript
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
@@ -39,7 +39,7 @@ gulp.task( 'default', function () {
 
 Run multiple external gulpfiles:
 
-```javascript
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
@@ -51,7 +51,14 @@ gulp.task( 'default', function () {
 
 ### Pre-process an external gulpfile before running it
 
-```javascript
+grunt-chug will not modify streams passed to it, but will happily accept
+streams modified by other plugins:
+
+```js
+var gulp = require( 'gulp' );
+var chug = require( 'gulp-chug' );
+var replace = require( 'gulp-replace' );
+
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
         .pipe( replace( 'Hello', 'Goodbye' ) )
@@ -64,7 +71,10 @@ gulp.task( 'default', function () {
 If you're only running external gulpfile(s), there's no need to actually read
 their contents. Set `{ read: false }` in `gulp.src`:
 
-```javascipt
+```js
+var gulp = require( 'gulp' );
+var chug = require( 'gulp-chug' );
+
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js', { read: false } )
         .pipe( chug() )
