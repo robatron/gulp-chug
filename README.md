@@ -1,7 +1,7 @@
 gulp-chug
 =========
 
-Run external gulpfiles as part of a task inside a gulpfile
+Run external gulpfiles as part of a gulp task inside another gulpfile
 
 **Note:** gulp-chug will *not* modify the stream, but will accept a modified
 stream, and will return the stream as received like normal.
@@ -37,6 +37,10 @@ gulp.task( 'default', function () {
 Pre-process the gulpfile before running it:
 
 ```javascript
+var gulp = require( 'gulp' );
+var chug = require( 'gulp-chug' );
+var replace = replace( 'gulp-replace' );
+
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
         .pipe( replace( 'Hello', 'Goodbye' ) )
@@ -47,6 +51,9 @@ gulp.task( 'default', function () {
 Make gulp-chug a little faster by not reading the source stream with `{ read: false }`:
 
 ```javascipt
+var gulp = require( 'gulp' );
+var chug = require( 'gulp-chug' );
+
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js', { read: false } )
         .pipe( chug() )
