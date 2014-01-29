@@ -5,9 +5,8 @@ gulp-chug [![NPM version][npm-badge-img]][npm-url]
 
 gulp-chug is *non-modifying*, i.e., gulp-chug will not modify streams passed
 through it, but will happily accept and run streams modified by other plugins
-from the
-[gulp globber](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulpsrcglobs-options)
-(`gulp.src`).
+from
+`[gulp.src](https://github.com/gulpjs/gulp/blob/master/docs/API.md#gulpsrcglobs-options)`
 
 Inspired by [@shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
 
@@ -48,7 +47,7 @@ gulp.task( 'default', function () {
 } );
 ```
 
-Pre-process the gulpfile before running it:
+Pre-process the gulpfile with other plugins before running it:
 
 ```javascript
 gulp.task( 'default', function () {
