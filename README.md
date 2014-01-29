@@ -43,7 +43,7 @@ var chug = require( 'gulp-chug' );
 
 gulp.task( 'default', function () {
 
-    // Find all gulpfiles under all subdirectories
+    // Find and run all gulpfiles under all subdirectories
     gulp.src( './**/gulpfile.js' )
         .pipe( chug() )
 } );
@@ -86,7 +86,7 @@ gulp.task( 'default', function () {
 } );
 ```
 
-Licence
+License
 -------
 The MIT License (MIT)
 
