@@ -18,6 +18,7 @@ Install with [npm](https://npmjs.org/package/gulp-chug):
 npm install gulp-chug --save
 ```
 
+
 Usage
 -----
 
@@ -85,6 +86,7 @@ gulp.task( 'default', function () {
         .pipe( chug() )
 } );
 ```
+
 
 License
 -------
