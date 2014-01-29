@@ -12,7 +12,7 @@ Usage
 
 Run an external gulpfile:
 
-```javascript
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
@@ -24,7 +24,7 @@ gulp.task( 'default', function () {
 
 Run multiple external gulpfiles:
 
-```javascript
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
@@ -36,7 +36,7 @@ gulp.task( 'default', function () {
 
 Pre-process the gulpfile before running it:
 
-```javascript
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 var replace = replace( 'gulp-replace' );
@@ -50,7 +50,7 @@ gulp.task( 'default', function () {
 
 Make gulp-chug a little faster by not reading the source stream with `{ read: false }`:
 
-```javascipt
+```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
