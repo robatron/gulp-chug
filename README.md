@@ -1,11 +1,22 @@
-gulp-chug
+gulp-chug [![NPM version][npm-badge-img]][npm-url]
 =========
 
-Run external gulpfiles as part of a task inside a gulpfile
+A [gulp][gulp-url] plugin for running external gulpfiles as part of a task inside another gulpfile.
 
 **Note:** gulp-chug will *not* modify the stream, but will accept a modified
 stream, and will return the stream as received like normal.
 
+Inspired by [@shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
+
+
+Install
+-------
+
+Install with [npm](https://npmjs.org/package/gulp-chug):
+
+```sh
+npm install gulp-chug --save
+```
 
 Usage
 -----
@@ -76,3 +87,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+[npm-badge-img]: https://badge.fury.io/js/gulp-chug.png
+[npm-url]: https://npmjs.org/package/gulp-chug
+[gulp-url]: https://github.com/wearefractal/gulp
