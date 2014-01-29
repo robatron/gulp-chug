@@ -1,7 +1,7 @@
 {
   "name": "gulp-chug",
   "version": "0.1.0",
-  "description": "Run gulpfiles as part of gulp tasks inside other gulpfiles.",
+  "description": "Run external gulpfiles as part of a task inside a gulpfile",
   "main": "index.js",
   "keywords": [
     "gulpplugin",
