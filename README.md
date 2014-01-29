@@ -23,7 +23,9 @@ npm install gulp-chug --save
 Usage
 -----
 
-Run an external gulpfile:
+### Run external gulpfiles
+
+Run one external gulpfile:
 
 ```javascript
 var gulp = require( 'gulp' );
@@ -47,7 +49,7 @@ gulp.task( 'default', function () {
 } );
 ```
 
-Pre-process the gulpfile with other plugins before running it:
+### Pre-process an external gulpfile before running it
 
 ```javascript
 gulp.task( 'default', function () {
