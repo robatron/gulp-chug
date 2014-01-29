@@ -61,7 +61,11 @@ var replace = require( 'gulp-replace' );
 
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
+
+        // Transform stream with gulp-replace
         .pipe( replace( 'Hello', 'Goodbye' ) )
+
+        // Run stream with gulp-chug
         .pipe( chug() )
 } );
 ```
