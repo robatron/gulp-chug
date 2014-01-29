@@ -1,7 +1,7 @@
 gulp-chug [![NPM version][npm-badge-img]][npm-url]
 =========
 
-A [gulp][gulp-url] plugin for running external gulpfiles as part of a task inside another gulpfile.
+> A [gulp][gulp-url] plugin for running external gulpfiles as part of a task inside another gulpfile.
 
 **Note:** gulp-chug will *not* modify the stream, but will accept a modified
 stream, and will return the stream as received like normal.
