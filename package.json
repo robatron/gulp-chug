@@ -18,6 +18,7 @@
     "through2": "~0.4.1",
     "gulp-util": "~2.2.13",
     "gulp": "~3.4.0",
-    "resolve": "~0.6.1"
+    "resolve": "~0.6.1",
+    "gulp-replace": "~0.2.0"
   }
 }
