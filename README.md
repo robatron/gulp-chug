@@ -65,7 +65,7 @@ gulp.task( 'default', function () {
         // Transform stream with gulp-replace
         .pipe( replace( 'Hello', 'Goodbye' ) )
 
-        // Run stream with gulp-chug
+        // Run modified stream with gulp-chug
         .pipe( chug() )
 } );
 ```
