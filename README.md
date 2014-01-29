@@ -1,10 +1,10 @@
 gulp-chug [![NPM version][npm-badge-img]][npm-url]
 =========
 
-> A [gulp][gulp-url] plugin for running external gulpfiles as part of a task inside another gulpfile.
+> A [gulp][gulp-url] plugin for running external gulpfiles as part of a gulp task inside another gulpfile.
 
 gulp-chug is *non-modifying*, i.e., gulp-chug will return the same stream it
-receives. See [Use with other plugins](#use-with-other-plugins) for and example.
+receives. See [Use with other plugins](#use-with-other-plugins) for an example.
 
 Inspired by [shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
 
