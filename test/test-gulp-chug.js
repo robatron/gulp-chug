@@ -3,11 +3,6 @@ var gulp    = require( 'gulp' );
 var chug    = require( '../index.js' );
 
 
-var testPlaceholder = function () {
-    throw new Error( 'Test not yet implemented.');
-};
-
-
 describe( 'gulp-chug', function () {
     describe( 'in buffer mode', function () {
         describe( 'when working with gulp sourcing', function () {
@@ -32,7 +27,7 @@ describe( 'gulp-chug', function () {
                 // Directory wildcard globbing
             } );
             it( 'should ignore non-existent sources', function () {
-                testPlaceholder();
+                gulp.src( './non-existent-gulpfile.js' ).pipe( chug() );
             } );
         } );
 
@@ -51,3 +46,10 @@ describe( 'gulp-chug', function () {
         } );
     } );
 } );
+
+
+/** Test placeholder. Call in unimplemented test cases to fail the test case.
+*/
+var testPlaceholder = function () {
+    throw new Error( 'Test not yet implemented.');
+};
