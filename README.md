@@ -15,7 +15,7 @@ Install
 Install with [npm](https://npmjs.org/package/gulp-chug):
 
 ```sh
-npm install gulp-chug --save
+npm install gulp-chug
 ```
 
 
