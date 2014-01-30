@@ -10,7 +10,9 @@
     "nest",
     "inception",
     "cascade",
-    "domino"
+    "domino",
+    "grunt-hub",
+    "gulp-hub"
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
   "license": "MIT",
