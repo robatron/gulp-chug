@@ -20,7 +20,7 @@
     "lodash": "~2.4.1",
     "through2": "~0.4.1",
     "gulp-util": "~2.2.13",
-    "gulp": "~3.4.0",
+    "gulp": "~3.5",
     "resolve": "~0.6.1"
   },
   "devDependencies": {

@@ -1,4 +1,4 @@
-gulp-chug [![NPM version][npm-badge-img]][npm-url] [![Build Status](https://travis-ci.org/robatron/gulp-chug.png?branch=master)](https://travis-ci.org/robatron/gulp-chug)
+gulp-chug [![NPM version][npm-badge-img]][npm-url] [![Build Status](https://travis-ci.org/robatron/gulp-chug.png?branch=master)](https://travis-ci.org/robatron/gulp-chug) [![Dependency Status](https://david-dm.org/robatron/gulp-chug.png)](https://david-dm.org/robatron/gulp-chug)
 =========
 
 > A [gulp][gulp-url] plugin for running external gulpfiles as part of a gulp task inside another gulpfile.
