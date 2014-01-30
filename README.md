@@ -1,16 +1,30 @@
-gulp-chug
+gulp-chug [![NPM version][npm-badge-img]][npm-url]
 =========
 
-Run external gulpfiles as part of a gulp task inside another gulpfile
+> A [gulp][gulp-url] plugin for running external gulpfiles as part of a gulp task inside another gulpfile.
 
-**Note:** gulp-chug will *not* modify the stream, but will accept a modified
-stream, and will return the stream as received like normal.
+gulp-chug is *non-modifying*, i.e., gulp-chug will return the same stream it
+receives. See [Use with other plugins](#use-with-other-plugins) for an example.
+
+Inspired by [shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
+
+
+Install
+-------
+
+Install with [npm](https://npmjs.org/package/gulp-chug):
+
+```sh
+npm install gulp-chug
+```
 
 
 Usage
 -----
 
-Run an external gulpfile:
+### Run external gulpfiles
+
+Run one external gulpfile:
 
 ```js
 var gulp = require( 'gulp' );
@@ -29,26 +43,39 @@ var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
 
 gulp.task( 'default', function () {
+
+    // Find and run all gulpfiles under all subdirectories
     gulp.src( './**/gulpfile.js' )
         .pipe( chug() )
 } );
 ```
 
-Pre-process the gulpfile before running it:
+### Use with other plugins
+
+grunt-chug will not modify streams passed to it, but will happily accept
+streams modified by other plugins:
 
 ```js
 var gulp = require( 'gulp' );
 var chug = require( 'gulp-chug' );
-var replace = replace( 'gulp-replace' );
+var replace = require( 'gulp-replace' );
 
 gulp.task( 'default', function () {
     gulp.src( './subproj/gulpfile.js' )
+
+        // Transform stream with gulp-replace
         .pipe( replace( 'Hello', 'Goodbye' ) )
+
+        // Run modified stream with gulp-chug
         .pipe( chug() )
 } );
 ```
 
-Make gulp-chug a little faster by not reading the source stream with `{ read: false }`:
+### Make gulp-chug faster by ignoring file contents
+
+If gulp-chug is the only plugin in the stream, there's no need to actually read
+the contents of the gulpfiles. Set `{ read: false }` in `gulp.src` to speed
+things up:
 
 ```js
 var gulp = require( 'gulp' );
@@ -60,7 +87,8 @@ gulp.task( 'default', function () {
 } );
 ```
 
-Licence
+
+License
 -------
 The MIT License (MIT)
 
@@ -83,3 +111,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+[npm-badge-img]: https://badge.fury.io/js/gulp-chug.png
+[npm-url]: https://npmjs.org/package/gulp-chug
+[gulp-url]: https://github.com/wearefractal/gulp

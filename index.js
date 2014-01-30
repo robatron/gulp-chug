@@ -31,7 +31,7 @@ module.exports = function ( options ) {
         var self = this;
 
 
-        // Since we're not modifying the gruntfile, always push it back on the
+        // Since we're not modifying the gulpfile, always push it back on the
         // stream.
         self.push( file );
 
@@ -156,7 +156,7 @@ module.exports = function ( options ) {
 
 
             // Tell gulp (and the user) we're done!
-            say( 'Returning to parent gruntfile...' );
+            say( 'Returning to parent gulpfile...' );
             callback();
         } );
 
