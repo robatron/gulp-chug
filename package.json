@@ -30,6 +30,6 @@
     "mocha": "~1.17.1"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "node node_modules/mocha/bin/mocha"
   }
 }
