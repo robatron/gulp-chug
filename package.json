@@ -22,6 +22,8 @@
     "resolve": "~0.6.1"
   },
   "devDependencies": {
-    "gulp-replace": "~0.2.0"
+    "gulp-replace": "~0.2.0",
+    "gulp-mocha": "~0.4.1",
+    "event-stream": "~3.1.0"
   }
 }
