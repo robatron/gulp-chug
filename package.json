@@ -29,6 +29,6 @@
     "event-stream": "~3.1.0"
   },
   "scripts": {
-    "test": "cd test && node ../node_modules/gulp/bin/gulp"
+    "test": "mocha"
   }
 }
