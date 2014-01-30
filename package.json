@@ -1,6 +1,6 @@
 {
   "name": "gulp-chug",
-  "version": "0.1.5",
+  "version": "0.1.8",
   "description": "Run external gulpfiles as part of a gulp task inside another gulpfile",
   "repository": "https://github.com/robatron/gulp-chug.git",
   "main": "index.js",
@@ -10,7 +10,9 @@
     "nest",
     "inception",
     "cascade",
-    "domino"
+    "domino",
+    "grunt-hub",
+    "gulp-hub"
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
   "license": "MIT",
@@ -18,12 +20,15 @@
     "lodash": "~2.4.1",
     "through2": "~0.4.1",
     "gulp-util": "~2.2.13",
-    "gulp": "~3.4.0",
+    "gulp": "~3.5",
     "resolve": "~0.6.1"
   },
   "devDependencies": {
     "gulp-replace": "~0.2.0",
     "gulp-mocha": "~0.4.1",
     "event-stream": "~3.1.0"
+  },
+  "scripts": {
+    "test": "cd test && node ../node_modules/gulp/bin/gulp"
   }
 }
