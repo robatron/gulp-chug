@@ -6,5 +6,5 @@ var gulp = require( 'gulp' );
 var gutil = require( 'gulp-util' );
 
 gulp.task( 'default', function () {
-    fs.writeFileSync( 'testfile', 'testfile2' )
+    fs.writeFileSync( '<%= filename %>', '<%= fileContents %>' )
 } );
