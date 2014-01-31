@@ -11,16 +11,20 @@ var PluginError = gutil.PluginError;
 
 
 // Name of this plugin
-const PLUGIN_NAME   = require( './package.json' ).name;
+const PLUGIN_NAME  = require( './package.json' ).name;
+
+// Current working directory
+const CWD = process.cwd();
 
 
 // Primary gulp function
 module.exports = function ( options ) {
 
     // Set default options
+    // TODO: Document these options
     var opts = _.assign( {
-        nodeCmd: 'node',
-        tasks: [ 'default' ]
+        nodeCmd: 'node', // TODO: Remove custom `node` command?
+        tasks: [ 'default' ] // TODO: Support strings as well
     }, options );
 
 
@@ -46,6 +50,14 @@ module.exports = function ( options ) {
         };
 
 
+        // Make sure path to gulpfile is specified, otherwise error
+        // TODO: Support virtual gulpfiles
+        if ( !file.path ) {
+            sayErr( 'Gulpfile path not specified.' );
+            return callback();
+        }
+
+
         // Error if file contents is stream ( { buffer: false } in gulp.src )
         // TODO: Add support for a streams
         if ( file.isStream() ) {
@@ -57,19 +69,19 @@ module.exports = function ( options ) {
         // Gather gulpfile info
         var gulpfile = {};
         gulpfile.path       = file.path;
-        gulpfile.relPath    = path.relative( process.cwd(), gulpfile.path );
-        gulpfile.base       = file.base;
-        gulpfile.relBase    = path.relative( process.cwd(), gulpfile.base );
+        gulpfile.relPath    = path.relative( CWD, gulpfile.path );
+        gulpfile.base       = path.dirname( gulpfile.path );
+        gulpfile.relBase    = path.relative( CWD, gulpfile.base );
         gulpfile.name       = path.basename( gulpfile.path );
         gulpfile.ext        = path.extname( gulpfile.name );
 
 
         // If file contents is null, { read: false }, just execute file as-is
-        // on disk
+        // on disk. We must have at least the path of the file to continue.
         if( file.isNull() ){
             say( util.format(
-                'Gulpfile, %s, contents is empty. Reading directly from disk...',
-                gulpfile.name
+                'The contents of %s is empty. Reading directly from disk...',
+                gutil.colors.magenta( gulpfile.relPath )
             ) );
         }
 
@@ -91,7 +103,7 @@ module.exports = function ( options ) {
             gulpfile.path           = path.join( gulpfile.base, tmpGulpfileName );
             gulpfile.tmpPath        = gulpfile.path;
             gulpfile.origRelPath    = gulpfile.relPath;
-            gulpfile.relPath        = path.relative( process.cwd(), gulpfile.path );
+            gulpfile.relPath        = path.relative( CWD, gulpfile.path );
             gulpfile.name           = tmpGulpfileName;
 
             say( util.format(
