@@ -4,7 +4,10 @@
 #   1. Move 0.1 tag -> HEAD, push
 #   2. Publish -> NPM registry
 
-git tag -a 0.1 -m "IPO" --force
+TAG_NAME="0.1"
+TAG_MSG="IPO"
+
 git push origin-http master
-git push origin-http 0.1 --force
+git tag -a $TAG_NAME -m "$TAG_MSG" --force
+git push origin-http $TAG_NAME --force
 npm publish
