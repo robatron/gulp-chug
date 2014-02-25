@@ -9,9 +9,7 @@ var resolve     = require( 'resolve' );
 var gutil       = require( 'gulp-util' );
 var PluginError = gutil.PluginError;
 
-
-// Name of this plugin
-const PLUGIN_NAME   = require( './package.json' ).name;
+var PKG         = require( './package.json' );
 
 
 // Primary gulp function
@@ -38,18 +36,21 @@ module.exports = function ( options ) {
 
         // Configure logging and errors
         var say = function( msg ) {
-            console.log( util.format( '[%s]', gutil.colors.green( PLUGIN_NAME ) ), msg );
+            console.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
         };
 
         var sayErr = function( errMsg ) {
-            self.emit( 'error', new PluginError( PLUGIN_NAME, errMsg ) );
+            self.emit( 'error', new PluginError( PKG.name, errMsg ) );
         };
 
 
         // Error if file contents is stream ( { buffer: false } in gulp.src )
         // TODO: Add support for a streams
         if ( file.isStream() ) {
-            sayErr( 'Streams are not supported at this time. Sorry!' );
+            sayErr(
+                'Streams are not supported yet. Pull requests welcome :)' +
+                gutil.colors.magenta( PKG.repository )
+            );
             return callback();
         }
 
