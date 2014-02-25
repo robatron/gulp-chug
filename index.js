@@ -109,10 +109,14 @@ module.exports = function ( options ) {
             var localGulpPackageBase    = path.dirname( resolve.sync( 'gulp', { basedir: gulpfile.base } ) );
             var localGulpPackage        = require( path.join( localGulpPackageBase, 'package.json' ) );
             var localGulpCliPath        = path.resolve( path.join( localGulpPackageBase, localGulpPackage.bin.gulp ) );
-        } catch( e ) {
+        } catch( err ) {
             sayErr( util.format(
-                'Unable to find local gulp. Try running \'npm install gulp\' from %s.',
-                gulpfile.base
+                'Problem finding locally-installed `gulp` for gulpfile %s. ' +
+                '(Try running `npm install gulp` from %s to install a local ' +
+                'gulp for said gulpfile.)\n\n%s',
+                gutil.colors.magenta( gulpfile.origPath ),
+                gutil.colors.magenta( gulpfile.base ),
+                err
             ) );
             return callback();
         }
