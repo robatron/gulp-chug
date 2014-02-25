@@ -149,7 +149,11 @@ module.exports = function ( options ) {
                 }
 
             } else {
-                sayErr( 'Error executing gulpfile: ' + stderr );
+                sayErr( util.format(
+                    'Error executing gulpfile %s:\n\n%s',
+                    gutil.colors.magenta( gulpfile.path ),
+                    stderr
+                ) );
             }
 
 
