@@ -39,9 +39,11 @@ describe( 'gulp-chug', function () {
             it( 'should run a gulpfile', function ( done ) {
 
                 var fakeFile = new gutil.File( {
-                    path: path.resolve( TESTBED_DIRNAME ),
+                    path: path.join( path.resolve( TESTBED_DIRNAME ), 'gulpfile.js' ),
                     contents: new Buffer( gulpfileTmpl( DEFAULT_TMPL_CONTEXT ) )
                 } );
+
+                console.log( '>>>', fakeFile.path );
 
                 var myChugger = chug();
 

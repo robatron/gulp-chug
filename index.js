@@ -112,7 +112,7 @@ module.exports = function ( options ) {
             ) )
 
             // Write tmp file to disk
-            fs.writeFileSync( gulpfile.path, file.contents );
+            fs.writeFileSync( gulpfile.tmpPath, file.contents );
         }
 
 
