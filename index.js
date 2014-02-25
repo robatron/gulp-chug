@@ -38,7 +38,7 @@ module.exports = function ( options ) {
 
         // Configure logging and errors
         var say = function( msg ) {
-            gutil.log( util.format( '%s:', gutil.colors.green( PLUGIN_NAME ) ), msg );
+            console.log( util.format( '[%s]', gutil.colors.green( PLUGIN_NAME ) ), msg );
         };
 
         var sayErr = function( errMsg ) {
