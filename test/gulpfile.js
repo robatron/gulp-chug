@@ -3,44 +3,44 @@
 
     TODO: Impement proper testing framework, e.g., mocha
 */
-var gulp 		= require( 'gulp' );
+var gulp        = require( 'gulp' );
 var replace     = require( 'gulp-replace' );
-var gulpCascade = require( '../index.js' );
+var chug        = require( '../index.js' );
 
-gulp.task( 'happy', function () {
+gulp.task( 'happy', function ( cb ) {
     gulp.src( './subproj/gulpfile.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'custom-filename', function () {
     gulp.src( './subproj/gulpfile-custom-name.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'deep-nest', function () {
     gulp.src( './subproj/subdir/gulpfile.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'glob', function () {
     gulp.src( './subproj/**/gulpfile*.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'non-existant', function () {
     gulp.src( './subproj/non-existant-file.js' )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'no-read', function () {
     gulp.src( './subproj/gulpfile.js', { read: false } )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'modify-before', function () {
     gulp.src( './subproj/gulpfile.js' )
         .pipe( replace( 'Hello', 'Goodbye' ) )
-        .pipe( gulpCascade() )
+        .pipe( chug() )
 } );
 
 gulp.task( 'default', [
