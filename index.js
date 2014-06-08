@@ -1,7 +1,7 @@
 var util        = require( 'util' );
 var path        = require( 'path' );
 var fs          = require( 'fs' );
-var exec        = require( 'child_process' ).exec;
+var spawn        = require( 'child_process' ).spawn;
 
 var _           = require( 'lodash' );
 var through     = require( 'through2' );
@@ -17,7 +17,6 @@ module.exports = function ( options ) {
 
     // Set default options
     var opts = _.assign( {
-        nodeCmd: 'node',
         tasks: [ 'default' ]
     }, options );
 
@@ -35,8 +34,12 @@ module.exports = function ( options ) {
 
 
         // Configure logging and errors
-        var say = function( msg ) {
-            console.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+        var say = function( msg, noNewLine ) {
+            var sayFn = console.log;
+            if (noNewLine) {
+                sayFn = util.print
+            }
+            sayFn( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
         };
 
         var sayErr = function( errMsg ) {
@@ -123,51 +126,62 @@ module.exports = function ( options ) {
         }
 
 
-        // Construct gulp command
-        var cmd = [
-            opts.nodeCmd,
-            localGulpCliPath,
+        // Construct gulp args
+        var args = [
             '--gulpfile', gulpfile.name,
             opts.tasks.join( ' ' )
-        ].join( ' ' );
+        ];
 
-
-        say( 'Running command \'' + cmd + '\'...');
+        say( 'Running command \'' + localGulpCliPath + '\'...');
 
 
         // Execute local gulp cli script
-        exec( cmd, { cwd: gulpfile.base }, function ( err, stdout, stderr ) {
+        var spawnedGulp = spawn( localGulpCliPath, args, { cwd: gulpfile.base } );
 
+        spawnedGulp.on('error', function (error) {
+            sayErr( util.format(
+                'Error executing gulpfile %s:\n\n%s',
+                gutil.colors.magenta( gulpfile.path ),
+                error
+            ) );
+        });
+
+        // Handle data coming from stdout and stderr
+        var handleData = function (data) {
             // Log output from gulpfile
-            if ( ! err ) {
-                var stdoutLines = stdout.split( gutil.linefeed );
-                for( var i = 0; i < stdoutLines.length; ++i ) {
-                    say( util.format( '(%s) %s',
-                        gutil.colors.magenta( gulpfile.relPath ),
-                        stdoutLines[ i ]
-                    ) );
-                }
+            say( util.format( '(%s) %s',
+                gutil.colors.magenta( gulpfile.relPath ),
+                data.toString()
+            ), true );
+        };
 
-            } else {
-                sayErr( util.format(
-                    'Error executing gulpfile %s:\n\n%s',
-                    gutil.colors.magenta( gulpfile.path ),
-                    stderr
-                ) );
-            }
+        // Attach event listener to stream of data.
+        spawnedGulp.stdout.on('data', handleData);
+        spawnedGulp.stderr.on('data', handleData);
 
-
-            // Remove temp file if one exists
-            if( gulpfile.tmpPath ) {
-                say( util.format( 'Removing temp file %s', gulpfile.tmpPath ) );
-                fs.unlinkSync( gulpfile.tmpPath );
-            }
-
+        spawnedGulp.on('exit', function () {
+            cleanupTmpFile();
 
             // Tell gulp (and the user) we're done!
             say( 'Returning to parent gulpfile...' );
             callback();
-        } );
+        });
+
+        // Remove temp file if one exists
+        var cleanupTmpFile = function () {
+            // Wrap in try/catch because when executed due to ctrl+c
+            // we can't unlink the file.
+            try {
+                if( gulpfile.tmpPath ) {
+                    say( util.format( 'Removing temp file %s', gulpfile.tmpPath ) );
+                    fs.unlinkSync( gulpfile.tmpPath );
+                }
+            } catch (e) {}
+        };
+
+        // If user ctrl+c then we want to clean up the file as well.
+        process.on('SIGINT', cleanupTmpFile);
+
 
     } );
 };
