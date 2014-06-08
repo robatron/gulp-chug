@@ -42,10 +42,7 @@ module.exports = function ( options ) {
         // Error if file contents is stream ( { buffer: false } in gulp.src )
         // TODO: Add support for a streams
         if ( file.isStream() ) {
-            sayErr(
-                'Streams are not supported yet. Pull requests welcome :)' +
-                gutil.colors.magenta( PKG.repository )
-            );
+            sayErr( 'Streams are not supported yet. Pull requests welcome :)' );
             return callback();
         }
 

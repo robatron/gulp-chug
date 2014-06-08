@@ -25,7 +25,8 @@
   "devDependencies": {
     "proxyquire": "~1.0.1",
     "sinon": "~1.10.2",
-    "mocha": "~1.20.1"
+    "mocha": "~1.20.1",
+    "should": "~4.0.1"
   },
   "scripts": {
     "test": "mocha",
