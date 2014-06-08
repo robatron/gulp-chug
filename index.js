@@ -1,7 +1,7 @@
 var util        = require( 'util' );
 var path        = require( 'path' );
 var fs          = require( 'fs' );
-var spawn        = require( 'child_process' ).spawn;
+var spawn       = require( 'child_process' ).spawn;
 
 var _           = require( 'lodash' );
 var through     = require( 'through2' );
@@ -11,7 +11,6 @@ var PluginError = gutil.PluginError;
 
 var PKG         = require( './package.json' );
 
-
 // Primary gulp function
 module.exports = function ( options ) {
 
@@ -20,32 +19,25 @@ module.exports = function ( options ) {
         tasks: [ 'default' ]
     }, options );
 
-
     // Create a stream through which each file will pass
     return through.obj( function ( file, enc, callback ) {
 
         // Grab reference to this through object
         var self = this;
 
-
         // Since we're not modifying the gulpfile, always push it back on the
         // stream.
         self.push( file );
 
-
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
-            var sayFn = console.log;
-            if (noNewLine) {
-                sayFn = util.print
-            }
+            var sayFn = noNewLine ? util.print : console.log;
             sayFn( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
         };
 
         var sayErr = function( errMsg ) {
             self.emit( 'error', new PluginError( PKG.name, errMsg ) );
         };
-
 
         // Error if file contents is stream ( { buffer: false } in gulp.src )
         // TODO: Add support for a streams
@@ -57,8 +49,7 @@ module.exports = function ( options ) {
             return callback();
         }
 
-
-        // Gather gulpfile info
+        // Gather target gulpfile info
         var gulpfile = {};
         gulpfile.path       = file.path;
         gulpfile.relPath    = path.relative( process.cwd(), gulpfile.path );
@@ -66,7 +57,6 @@ module.exports = function ( options ) {
         gulpfile.relBase    = path.relative( process.cwd(), gulpfile.base );
         gulpfile.name       = path.basename( gulpfile.path );
         gulpfile.ext        = path.extname( gulpfile.name );
-
 
         // If file contents is null, { read: false }, just execute file as-is
         // on disk
@@ -76,7 +66,6 @@ module.exports = function ( options ) {
                 gulpfile.name
             ) );
         }
-
 
         // If file contents is a buffer, write a temp file and run that instead
         if( file.isBuffer() ) {
@@ -101,12 +90,11 @@ module.exports = function ( options ) {
             say( util.format(
                 'Writing buffer to %s...',
                 gutil.colors.magenta( gulpfile.relPath )
-            ) )
+            ) );
 
             // Write tmp file to disk
             fs.writeFileSync( gulpfile.path, file.contents );
         }
-
 
         // Find local gulp cli script
         try {
@@ -125,63 +113,59 @@ module.exports = function ( options ) {
             return callback();
         }
 
-
         // Construct gulp args
         var args = [
             '--gulpfile', gulpfile.name,
             opts.tasks.join( ' ' )
         ];
 
-        say( 'Running command \'' + localGulpCliPath + '\'...');
+        say( 'Running command \'' + localGulpCliPath + '\'...' );
 
-
-        // Execute local gulp cli script
+        // Execute local gulpfile cli script
         var spawnedGulp = spawn( localGulpCliPath, args, { cwd: gulpfile.base } );
 
-        spawnedGulp.on('error', function (error) {
-            sayErr( util.format(
-                'Error executing gulpfile %s:\n\n%s',
-                gutil.colors.magenta( gulpfile.path ),
-                error
-            ) );
-        });
-
-        // Handle data coming from stdout and stderr
-        var handleData = function (data) {
-            // Log output from gulpfile
+        // Log output coming from gulpfile stdout and stderr
+        var logGulpfileOutput = function ( data ) {
             say( util.format( '(%s) %s',
                 gutil.colors.magenta( gulpfile.relPath ),
                 data.toString()
             ), true );
         };
 
-        // Attach event listener to stream of data.
-        spawnedGulp.stdout.on('data', handleData);
-        spawnedGulp.stderr.on('data', handleData);
-
-        spawnedGulp.on('exit', function () {
-            cleanupTmpFile();
-
-            // Tell gulp (and the user) we're done!
-            say( 'Returning to parent gulpfile...' );
-            callback();
-        });
-
         // Remove temp file if one exists
         var cleanupTmpFile = function () {
-            // Wrap in try/catch because when executed due to ctrl+c
-            // we can't unlink the file.
             try {
                 if( gulpfile.tmpPath ) {
                     say( util.format( 'Removing temp file %s', gulpfile.tmpPath ) );
                     fs.unlinkSync( gulpfile.tmpPath );
                 }
-            } catch (e) {}
+            } catch ( e ) {
+                // Wrap in try/catch because when executed due to ctrl+c,
+                // we can't unlink the file
+            }
         };
 
-        // If user ctrl+c then we want to clean up the file as well.
-        process.on('SIGINT', cleanupTmpFile);
+        // Handle errors in gulpfile
+        spawnedGulp.on( 'error', function ( error ) {
+            sayErr( util.format(
+                'Error executing gulpfile %s:\n\n%s',
+                gutil.colors.magenta( gulpfile.path ),
+                error
+            ) );
+        } );
 
+        // Handle gulpfile stdout and stderr
+        spawnedGulp.stdout.on( 'data', logGulpfileOutput );
+        spawnedGulp.stderr.on( 'data', logGulpfileOutput );
 
+        // Clean up temp gulpfile exit
+        spawnedGulp.on( 'exit', function () {
+            cleanupTmpFile();
+            say( 'Returning to parent gulpfile...' );
+            callback();
+        } );
+
+        // Clean up temp gulpfile if on ctrl + c
+        process.on( 'SIGINT', cleanupTmpFile );
     } );
 };
