@@ -20,11 +20,11 @@ var proxyDeps = {
     },
     path: {
         relative: _.noop,
-        dirname: _.noop,
-        basename: _.noop,
+        dirname: function () { return 'path-dirname-return' },
+        basename: function () { return 'path-basename-return' },
         extname: _.noop,
         join: function () { return 'path-join-return' },
-        resolve: _.noop
+        resolve: function () { return 'path-resolve-return' }
     },
     resolve: {
         sync: _.noop
@@ -38,12 +38,8 @@ var proxyDeps = {
         spawn: function () {
             return {
                 on: _.noop,
-                stdout: {
-                    on: _.noop
-                },
-                stderr: {
-                    on: _.noop
-                }
+                stdout: { on: _.noop },
+                stderr: { on: _.noop }
             }
         }
     },
@@ -100,7 +96,7 @@ describe( 'gulp-chug', function () {
         var streamFile = {
             isNull:     function () { return false },
             isStream:   function () { return false },
-            isBuffer:   function () { return true }
+            isBuffer:   function () { return false }
         };
 
         it( 'emits an error if a local gulp cannot be found', function ( done ) {
@@ -148,7 +144,35 @@ describe( 'gulp-chug', function () {
         } );
     } );
 
-    it( 'spawns a process to execute the target gulpfile' );
+    it( 'spawns a process to execute the target gulpfile', function () {
+        var pdeps = getProxyDeps( {
+            child_process: {
+                spawn: sinon.spy( function () {
+                    return {
+                        on: _.noop,
+                        stdout: { on: _.noop },
+                        stderr: { on: _.noop }
+                    }
+                } )
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+        var stream = chug();
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.write( streamFile );
+
+        pdeps.child_process.spawn.calledOnce.should.be.true;
+        pdeps.child_process.spawn.calledWith(
+            'path-resolve-return',
+            [ '--gulpfile', 'path-basename-return', 'default' ],
+            { cwd: 'path-dirname-return' }
+        ).should.be.true;
+    } );
+
     it( 'handles target gulpfile execution errors' );
     it( 'outputs stdout and stderr of the target gulpfile during execution' );
     it( 'cleans up any temporary gulpfiles on exit' );
