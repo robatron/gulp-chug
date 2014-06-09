@@ -175,7 +175,6 @@ describe( 'gulp-chug', function () {
 
     it( 'handles target gulpfile execution errors', function ( done ) {
         var ERR_MSG_BEGIN = 'Error executing gulpfile';
-
         var pdeps = getProxyDeps( {
             child_process: {
                 spawn: function () {
@@ -188,13 +187,11 @@ describe( 'gulp-chug', function () {
             }
         } );
         var chug = pequire( CHUG_PATH, pdeps );
-
         var stream = chug();
         stream.on( 'error', function ( err ) {
             err.message.should.startWith( ERR_MSG_BEGIN )
             done();
         } );
-
         var streamFile = {
             isNull:     function () { return false },
             isStream:   function () { return false },
@@ -203,6 +200,34 @@ describe( 'gulp-chug', function () {
         stream.write( streamFile );
     } );
 
-    it( 'outputs stdout and stderr of the target gulpfile during execution' );
+    it( 'outputs stdout and stderr of the target gulpfile during execution', function () {
+        var stdoutSpy = new sinon.spy();
+        var stderrSpy = new sinon.spy();
+        var pdeps = getProxyDeps( {
+            child_process: {
+                spawn: function () {
+                    return {
+                        on: _.noop,
+                        stdout: { on: stdoutSpy },
+                        stderr: { on: stderrSpy }
+                    }
+                }
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+        var stream = chug();
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.write( streamFile );
+
+        stdoutSpy.calledOnce.should.be.true;
+        stdoutSpy.calledWith( 'data' ).should.be.true;
+        stderrSpy.calledOnce.should.be.true;
+        stderrSpy.calledWith( 'data' ).should.be.true;
+    } );
+
     it( 'cleans up any temporary gulpfiles on exit' );
 } );
