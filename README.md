@@ -1,5 +1,4 @@
-gulp-chug [![NPM version][npm-badge-img]][npm-url] [![Build Status](https://travis-ci.org/robatron/gulp-chug.png?branch=master)](https://travis-ci.org/robatron/gulp-chug) [![Dependency Status](https://david-dm.org/robatron/gulp-chug.png)](https://david-dm.org/robatron/gulp-chug)
-=========
+# gulp-chug [![NPM version][npm-badge-img]][npm-url] [![Build Status](https://travis-ci.org/robatron/gulp-chug.png?branch=master)](https://travis-ci.org/robatron/gulp-chug) [![Dependency Status](https://david-dm.org/robatron/gulp-chug.png)](https://david-dm.org/robatron/gulp-chug)
 
 > A [gulp][gulp-url] plugin for running external gulpfiles as part of a gulp task inside another gulpfile.
 
@@ -11,8 +10,7 @@ Requires [node](//nodejs.org) >= 0.10
 Inspired by [shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
 
 
-Install
--------
+## Install
 
 Install with [npm](https://npmjs.org/package/gulp-chug):
 
@@ -21,8 +19,7 @@ npm install gulp-chug
 ```
 
 
-Usage
------
+## Usage
 
 ### Run external gulpfiles
 
@@ -88,10 +85,20 @@ gulp.task( 'default', function () {
         .pipe( chug() )
 } );
 ```
+## Changelog
 
+### 0.2
 
-License
--------
+- Use `child_process.spawn` instead of `child_process.exec` for real-time child gulpfile output (see [exec vs spawn](http://www.hacksparrow.com/difference-between-spawn-and-exec-of-node-js-child_process.html))
+- Implement proper unit tests
+- Fix bug where temp gulpfile would be written to the glob base instead of as a sibling to the original gulpfile
+
+### 0.1
+
+- Initial release
+
+## License
+
 The MIT License (MIT)
 
 Copyright (c) 2014 Rob McGuire-Dale
