@@ -36,6 +36,9 @@ var proxyDeps = {
                 }
             }
         }
+    },
+    './package.json': {
+        name: 'gulp-chug-proxy'
     }
 };
 
@@ -60,18 +63,24 @@ describe( 'gulp-chug', function () {
         stream.write( streamFile );
     } );
 
-    xit( 'creates a temporary gulpfile next to the original gulpfile if supplied a buffer', function () {
-        var chug = pequire( '../index.js', getProxyDeps() );
+    it( 'creates a temporary gulpfile if supplied a buffer', function () {
+        var pdeps = getProxyDeps( {
+            fs: {
+                writeFileSync: sinon.spy()
+            }
+        } );
+        var chug = pequire( '../index.js', pdeps );
         var stream = chug();
         var streamFile = {
             isNull:     function () { return false },
             isStream:   function () { return false },
             isBuffer:   function () { return true },
-            path: './gulpfile.js',
+            path: './sandbox/gulpfile.js',
             contents: 'file-contents'
         };
         stream.write( streamFile );
-        //pdeps.fs.writeFileSync.calledOnce.should.be.true;
+        pdeps.fs.writeFileSync.calledOnce.should.be.true;
+        pdeps.fs.writeFileSync.calledWith( 'path-join-return', streamFile.contents ).should.be.true;
     } );
 
     it( 'emits an error if a locally-installd gulpfile cannot be found' );
