@@ -116,7 +116,11 @@ module.exports = function ( options ) {
             opts.tasks.join( ' ' )
         ];
 
-        say( 'Running command \'' + localGulpCliPath + '\'...' );
+        say(
+            'Spawning local gulp process' + gutil.colors.magenta( localGulpCliPath ) +
+            ' with args ' + gutil.colors.magenta( args.join( ' ' ) ) +
+            ' from directory ' + gutil.colors.magenta( gulpfile.base ) + '...'
+        );
 
         // Execute local gulpfile cli script
         var spawnedGulp = spawn( localGulpCliPath, args, { cwd: gulpfile.base } );
