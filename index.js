@@ -67,7 +67,7 @@ module.exports = function ( options ) {
         // If file contents is a buffer, write a temp file and run that instead
         if( file.isBuffer() ) {
 
-            say( 'File is a buffer. Need to write buffer to temp file...')
+            say( 'File is a buffer. Need to write buffer to temp file...' );
 
             var tmpGulpfileName = util.format(
                 '%s.tmp.%s%s',
