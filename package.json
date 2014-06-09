@@ -33,7 +33,6 @@
   },
   "scripts": {
     "test": "mocha test/gulp-chug-spec.js && gulp --gulpfile test/gulp-chug-integrate.js",
-    "publish-0.1": "git tag -a 0.1 -f -m 'IPO' && git push origin master && git push -f origin 0.1 && npm publish",
-    "publish-0.2": "git tag -a 0.2 -f -m '0.2.x' && git push origin master && git push -f origin 0.2 && npm publish"
+    "publish-patch": "npm version patch && git push origin master --tags && npm publish"
   }
 }
