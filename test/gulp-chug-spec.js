@@ -1,7 +1,15 @@
+/**
+ * gulp-chug test spec file
+ *
+ * TODO: Use sinon sandboxes to suppress console output from gulp-chug
+ */
+var util    = require( 'util' );
+var path    = require( 'path' );
 var _       = require( 'lodash' );
 var pequire = require( 'proxyquire' ).noCallThru();
 var sinon   = require( 'sinon' );
 var should  = require( 'should' );
+var gutil   = require( 'gulp-util' );
 
 // Happy-path proxy dependencies
 var proxyDeps = {
@@ -75,15 +83,59 @@ describe( 'gulp-chug', function () {
             isNull:     function () { return false },
             isStream:   function () { return false },
             isBuffer:   function () { return true },
-            path: './sandbox/gulpfile.js',
             contents: 'file-contents'
         };
         stream.write( streamFile );
+
         pdeps.fs.writeFileSync.calledOnce.should.be.true;
         pdeps.fs.writeFileSync.calledWith( 'path-join-return', streamFile.contents ).should.be.true;
     } );
 
-    it( 'emits an error if a locally-installd gulpfile cannot be found' );
+    describe( 'during failures to find a local gulp', function () {
+
+        var ERR_MSG_BEGIN = 'Problem finding locally-installed `gulp` for gulpfile';
+
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return true }
+        };
+
+        it( 'emits an error if a local gulp cannot be found', function ( done ) {
+            var pdeps = getProxyDeps( {
+                resolve: { sync: function () { throw new Error() } }
+            } );
+            var chug = pequire( '../index.js', pdeps );
+            var stream = chug();
+            stream.on( 'error', function ( err ) {
+                err.message.should.startWith( ERR_MSG_BEGIN )
+                done();
+            } );
+            stream.write( streamFile );
+        } );
+
+        it( 'emits an error if the local gulp\'s package file cannot be loaded', function ( done ) {
+            var pdeps = getProxyDeps( {
+                path: _.assign( {}, getProxyDeps().path, {
+                    dirname: function () { return 'dirname-return' },
+                    join: function ( a, b ) {
+                        if( a === 'dirname-return' && b === 'package.json' ) {
+                            throw new Error();
+                        }
+                    }
+                } )
+            } );
+            var chug = pequire( '../index.js', pdeps );
+            var stream = chug();
+            stream.on( 'error', function ( err ) {
+                err.message.should.startWith( ERR_MSG_BEGIN )
+                done();
+            } );
+            stream.write( streamFile );
+        } );
+
+    } );
+
     it( 'spawns a process to execute the target gulpfile' );
     it( 'handles target gulpfile execution errors' );
     it( 'outputs stdout and stderr of the target gulpfile during execution' );
