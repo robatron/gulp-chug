@@ -16,6 +16,7 @@ module.exports = function ( options ) {
 
     // Set default options
     var opts = _.assign( {
+        nodeCmd: 'node',
         tasks: [ 'default' ]
     }, options );
 
@@ -110,20 +111,22 @@ module.exports = function ( options ) {
             return callback();
         }
 
-        // Construct gulp args
+        // Construct command and args
+        var cmd = opts.nodeCmd;
+
         var args = [
-            '--gulpfile', gulpfile.name,
+            localGulpCliPath, '--gulpfile', gulpfile.name,
             opts.tasks.join( ' ' )
         ];
 
         say(
-            'Spawning local gulp process' + gutil.colors.magenta( localGulpCliPath ) +
+            'Spawning process ' + gutil.colors.magenta( localGulpCliPath ) +
             ' with args ' + gutil.colors.magenta( args.join( ' ' ) ) +
             ' from directory ' + gutil.colors.magenta( gulpfile.base ) + '...'
         );
 
         // Execute local gulpfile cli script
-        var spawnedGulp = spawn( localGulpCliPath, args, { cwd: gulpfile.base } );
+        var spawnedGulp = spawn( cmd, args, { cwd: gulpfile.base } );
 
         // Log output coming from gulpfile stdout and stderr
         var logGulpfileOutput = function ( data ) {
