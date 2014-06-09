@@ -1,6 +1,6 @@
-var util        = require( 'util' );
-var path        = require( 'path' );
 var fs          = require( 'fs' );
+var path        = require( 'path' );
+var util        = require( 'util' );
 var spawn       = require( 'child_process' ).spawn;
 
 var _           = require( 'lodash' );
