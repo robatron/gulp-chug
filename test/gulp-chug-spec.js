@@ -11,6 +11,8 @@ var sinon   = require( 'sinon' );
 var should  = require( 'should' );
 var gutil   = require( 'gulp-util' );
 
+var CHUG_PATH = '../index.js';
+
 // Happy-path proxy dependencies
 var proxyDeps = {
     fs: {
@@ -58,7 +60,7 @@ var getProxyDeps = function ( overrides ) {
 describe( 'gulp-chug', function () {
 
     it( 'emits an error if supplied a stream', function ( done ) {
-        var chug = require( '../index.js' );
+        var chug = require( CHUG_PATH );
         var stream = chug();
         var streamFile = {
             isNull: function () { return false },
@@ -77,7 +79,7 @@ describe( 'gulp-chug', function () {
                 writeFileSync: sinon.spy()
             }
         } );
-        var chug = pequire( '../index.js', pdeps );
+        var chug = pequire( CHUG_PATH, pdeps );
         var stream = chug();
         var streamFile = {
             isNull:     function () { return false },
@@ -105,7 +107,7 @@ describe( 'gulp-chug', function () {
             var pdeps = getProxyDeps( {
                 resolve: { sync: function () { throw new Error() } }
             } );
-            var chug = pequire( '../index.js', pdeps );
+            var chug = pequire( CHUG_PATH, pdeps );
             var stream = chug();
             stream.on( 'error', function ( err ) {
                 err.message.should.startWith( ERR_MSG_BEGIN )
@@ -114,7 +116,7 @@ describe( 'gulp-chug', function () {
             stream.write( streamFile );
         } );
 
-        it( 'emits an error if the local gulp\'s package file cannot be loaded', function ( done ) {
+        it( 'emits an error if the local gulp\'s package file cannot be parsed', function ( done ) {
             var pdeps = getProxyDeps( {
                 path: _.assign( {}, getProxyDeps().path, {
                     dirname: function () { return 'dirname-return' },
@@ -125,7 +127,7 @@ describe( 'gulp-chug', function () {
                     }
                 } )
             } );
-            var chug = pequire( '../index.js', pdeps );
+            var chug = pequire( CHUG_PATH, pdeps );
             var stream = chug();
             stream.on( 'error', function ( err ) {
                 err.message.should.startWith( ERR_MSG_BEGIN )
@@ -134,6 +136,16 @@ describe( 'gulp-chug', function () {
             stream.write( streamFile );
         } );
 
+        it( 'emits an error if the local gulp\'s package file does not contain a binary path', function ( done ) {
+            var pdeps = getProxyDeps( { 'path-join-return': {} } );
+            var chug = pequire( CHUG_PATH, pdeps );
+            var stream = chug();
+            stream.on( 'error', function ( err ) {
+                err.message.should.startWith( ERR_MSG_BEGIN )
+                done();
+            } );
+            stream.write( streamFile );
+        } );
     } );
 
     it( 'spawns a process to execute the target gulpfile' );
