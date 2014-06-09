@@ -173,7 +173,36 @@ describe( 'gulp-chug', function () {
         ).should.be.true;
     } );
 
-    it( 'handles target gulpfile execution errors' );
+    it( 'handles target gulpfile execution errors', function ( done ) {
+        var ERR_MSG_BEGIN = 'Error executing gulpfile';
+
+        var pdeps = getProxyDeps( {
+            child_process: {
+                spawn: function () {
+                    return {
+                        on: function ( event, fn ) { fn() },
+                        stdout: { on: _.noop },
+                        stderr: { on: _.noop }
+                    }
+                }
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+
+        var stream = chug();
+        stream.on( 'error', function ( err ) {
+            err.message.should.startWith( ERR_MSG_BEGIN )
+            done();
+        } );
+
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.write( streamFile );
+    } );
+
     it( 'outputs stdout and stderr of the target gulpfile during execution' );
     it( 'cleans up any temporary gulpfiles on exit' );
 } );
