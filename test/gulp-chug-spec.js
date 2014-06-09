@@ -229,5 +229,33 @@ describe( 'gulp-chug', function () {
         stderrSpy.calledWith( 'data' ).should.be.true;
     } );
 
-    it( 'cleans up any temporary gulpfiles on exit' );
+    it( 'cleans up any temporary gulpfiles on exit', function () {
+        var pdeps = getProxyDeps( {
+            fs: {
+                writeFileSync: _.noop,
+                unlinkSync: sinon.spy()
+            },
+            child_process: {
+                spawn: function () {
+                    return {
+                        on: function ( event, fn ) {
+                            if ( event === 'exit' ) fn();
+                        },
+                        stdout: { on: _.noop },
+                        stderr: { on: _.noop }
+                    }
+                }
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+        var stream = chug();
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return true }
+        };
+        stream.write( streamFile );
+        pdeps.fs.unlinkSync.calledOnce.should.be.true;
+        pdeps.fs.unlinkSync.calledWith( 'path-join-return' ).should.be.true;
+    } );
 } );
