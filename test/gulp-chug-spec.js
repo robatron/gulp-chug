@@ -167,8 +167,8 @@ describe( 'gulp-chug', function () {
 
         pdeps.child_process.spawn.calledOnce.should.be.true;
         pdeps.child_process.spawn.calledWith(
-            'path-resolve-return',
-            [ '--gulpfile', 'path-basename-return', 'default' ],
+            'node',
+            [ 'path-resolve-return', '--gulpfile', 'path-basename-return', 'default' ],
             { cwd: 'path-dirname-return' }
         ).should.be.true;
     } );
