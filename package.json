@@ -27,10 +27,12 @@
     "sinon": "~1.10.2",
     "mocha": "~1.20.1",
     "should": "~4.0.1",
-    "gulp-util": "~2.2.16"
+    "gulp-util": "~2.2.16",
+    "gulp-replace": "~0.3.0",
+    "gulp": "~3.7.0"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "mocha test/gulp-chug-spec.js && gulp --gulpfile test/gulp-chug-integrate.js",
     "publish-0.1": "git tag -a 0.1 -f -m 'IPO' && git push origin master && git push -f origin 0.1 && npm publish"
   }
 }
