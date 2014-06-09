@@ -1,6 +1,11 @@
 /**
  * gulp-chug integration "tests" to assure a working state in a less-contrived
  * environment.
+ *
+ * This is basically a normal gulpfile that runs gulp-chug through some common
+ * scenarios.
+ *
+ * Integration "tests" pass if this gulpfile runs without error.
  */
 var gulp        = require( 'gulp' );
 var replace     = require( 'gulp-replace' );
