@@ -173,13 +173,13 @@ describe( 'gulp-chug', function () {
         ).should.be.true;
     } );
 
-    it( 'handles target gulpfile execution errors', function ( done ) {
+    it( 'handles spawn errors', function ( done ) {
         var ERR_MSG_BEGIN = 'Error executing gulpfile';
         var pdeps = getProxyDeps( {
             child_process: {
                 spawn: function () {
                     return {
-                        on: function ( event, fn ) { fn() },
+                        on: function ( event, fn ) { if ( event === 'error' ) fn() },
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }
                     }
@@ -189,7 +189,7 @@ describe( 'gulp-chug', function () {
         var chug = pequire( CHUG_PATH, pdeps );
         var stream = chug();
         stream.on( 'error', function ( err ) {
-            err.message.should.startWith( ERR_MSG_BEGIN )
+            err.message.should.startWith( ERR_MSG_BEGIN );
             done();
         } );
         var streamFile = {
@@ -197,6 +197,33 @@ describe( 'gulp-chug', function () {
             isStream:   function () { return false },
             isBuffer:   function () { return false }
         };
+        stream.write( streamFile );
+    } );
+
+    it( 'handles non-zero exit codes from spawned child gulpfiles', function ( done ) {
+        var ERR_MSG_PATTERN = /Gulpfile .* exited with an error :\(/;
+        var pdeps = getProxyDeps( {
+            child_process: {
+                spawn: function () {
+                    return {
+                        on: function ( event, fn ) { if ( event === 'exit' ) fn( 1 ) },
+                        stdout: { on: _.noop },
+                        stderr: { on: _.noop }
+                    }
+                }
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+        var stream = chug();
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.on( 'error', function ( err ) {
+            err.message.should.match( ERR_MSG_PATTERN );
+            done();
+        } );
         stream.write( streamFile );
     } );
 
@@ -239,7 +266,7 @@ describe( 'gulp-chug', function () {
                 spawn: function () {
                     return {
                         on: function ( event, fn ) {
-                            if ( event === 'exit' ) fn();
+                            if ( event === 'exit' ) fn( 0 );
                         },
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }

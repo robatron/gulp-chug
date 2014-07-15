@@ -163,9 +163,18 @@ module.exports = function ( options ) {
         spawnedGulp.stderr.on( 'data', logGulpfileOutput );
 
         // Clean up temp gulpfile exit
-        spawnedGulp.on( 'exit', function () {
+        spawnedGulp.on( 'exit', function ( exitCode ) {
             cleanupTmpFile();
-            say( 'Returning to parent gulpfile...' );
+
+            if ( exitCode === 0 ) {
+                say( 'Returning to parent gulpfile...' );
+            } else {
+                sayErr( util.format(
+                    'Gulpfile %s exited with an error :(',
+                    gutil.colors.magenta( gulpfile.path )
+                ) );
+            }
+
             callback();
         } );
 
