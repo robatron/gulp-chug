@@ -9,7 +9,7 @@ Requires [node](//nodejs.org) >= 0.10
 
 Inspired by [shama](https://github.com/shama)'s [grunt-hub](https://github.com/shama/grunt-hub).
 
-**Note:** This plugin has been [blacklisted](https://github.com/gulpjs/plugins/issues/93), however I have yet to find an example of a pattern that allows for the execution of child gulpfiles without task name collisions. If you have an example, please add a comment to the thread!
+**Note:** This plugin has been [blacklisted](https://github.com/gulpjs/plugins/issues/93), however I have yet to find an example of a pattern that allows for the execution of child gulpfiles without task name collisions. If you have an example, let me know!
 
 ## Install
 
@@ -86,6 +86,11 @@ gulp.task( 'default', function () {
         .pipe( chug() )
 } );
 ```
+
+## See also
+
+- [gulp-hub](https://github.com/frankwallis/gulp-hub) - Load tasks from other gulpfiles
+
 ## Changelog
 
 ### 0.2
