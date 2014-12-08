@@ -124,8 +124,10 @@ module.exports = function ( options ) {
             opts.tasks.join( ' ' )
         ];
 
-        // Concatinate args if provided
-        if ( opts.args ) args = args.concat( opts.args );
+        // Concatinate additional command-line arguments if provided
+        if ( _.isArray( opts.args ) || _.isString( opts.args ) ) {
+            args = args.concat( opts.args );
+        }
 
         say(
             'Spawning process ' + gutil.colors.magenta( localGulpCliPath ) +

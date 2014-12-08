@@ -176,6 +176,65 @@ describe( 'gulp-chug', function () {
         ).should.be.true;
     } );
 
+    it( 'supports additional command-line arguments if provided', function () {
+
+        // Additional string argument
+        var pdeps = getProxyDeps( {
+            child_process: {
+                spawn: sinon.spy( function () {
+                    return {
+                        on: _.noop,
+                        stdout: { on: _.noop },
+                        stderr: { on: _.noop }
+                    };
+                } )
+            }
+        } );
+        var chug = pequire( CHUG_PATH, pdeps );
+        var stream = chug( {
+            args: 'fake-arg-1'
+        } );
+        var streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.write( streamFile );
+
+        pdeps.child_process.spawn.calledOnce.should.be.true;
+        pdeps.child_process.spawn.calledWith(
+            'node',
+            [
+                'path-resolve-return', '--gulpfile', 'path-basename-return',
+                'default', 'fake-arg-1'
+            ],
+            { cwd: 'path-dirname-return' }
+        ).should.be.true;
+
+        // Additinal array arguments
+        pdeps.child_process.spawn.reset();
+        chug = pequire( CHUG_PATH, pdeps );
+        stream = chug( {
+            args: [ 'fake-arg-2', 'fake-arg-3' ]
+        } );
+        streamFile = {
+            isNull:     function () { return false },
+            isStream:   function () { return false },
+            isBuffer:   function () { return false }
+        };
+        stream.write( streamFile );
+
+        pdeps.child_process.spawn.calledOnce.should.be.true;
+        pdeps.child_process.spawn.calledWith(
+            'node',
+            [
+                'path-resolve-return', '--gulpfile', 'path-basename-return',
+                'default', 'fake-arg-2', 'fake-arg-3'
+            ],
+            { cwd: 'path-dirname-return' }
+        ).should.be.true;
+    } );
+
     it( 'handles spawn errors', function ( done ) {
         var ERR_MSG_BEGIN = 'Error executing gulpfile';
         var pdeps = getProxyDeps( {
