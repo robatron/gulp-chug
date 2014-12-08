@@ -1,6 +1,6 @@
 {
   "name": "gulp-chug",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Run external gulpfiles as part of a gulp task inside another gulpfile",
   "repository": "https://github.com/robatron/gulp-chug.git",
   "main": "index.js",
@@ -16,10 +16,10 @@
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
   "contributors": [
-      "Derek Peterson <derekjpeterson@gmail.com>",
-      "Harry Wolff <hswolff@gmail.com>",
-      "Evgenus <chernyshov.eugene@gmail.com>",
-      "Mike O'Brien <mob@mikeobrien.net>"
+    "Derek Peterson <derekjpeterson@gmail.com>",
+    "Harry Wolff <hswolff@gmail.com>",
+    "Evgenus <chernyshov.eugene@gmail.com>",
+    "Mike O'Brien <mob@mikeobrien.net>"
   ],
   "license": "MIT",
   "dependencies": {
