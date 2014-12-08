@@ -15,6 +15,12 @@
     "gulp-hub"
   ],
   "author": "Rob McGuire-Dale <rob.mcguiredale@gmail.com>",
+  "contributors": [
+      "Derek Peterson <derekjpeterson@gmail.com>",
+      "Harry Wolff <hswolff@gmail.com>",
+      "Evgenus <chernyshov.eugene@gmail.com>",
+      "Mike O'Brien <mob@mikeobrien.net>"
+  ],
   "license": "MIT",
   "dependencies": {
     "gulp-util": "3.0.1",
