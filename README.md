@@ -86,6 +86,54 @@ gulp.task( 'default', function () {
         .pipe( chug() )
 } );
 ```
+## Options
+
+Gulp chug supports several options, all of which are **optional**, e.g.,
+
+```js
+var gulp = require( 'gulp' );
+var chug = require( 'gulp-chug' );
+
+gulp.task( 'default', function () {
+    gulp.src( './subproj/gulpfile.js' )
+        .pipe( chug( {
+            nodeCmd: 'node',
+            tasks:  [ 'default' ],
+            args:   [ '--my-arg-1', '--my-arg-2' ]
+        } ) );
+} );
+```
+
+### tasks
+
+The tasks to run from each gulpfile. Default is `default`.
+
+```js
+chug( {
+    tasks: [ 'my-task-1', 'my-task-2' ]
+} )
+```
+
+### nodeCmd
+
+The node command to spawn when running gulpfiles. Default is `node`.
+
+```js
+chug( {
+    nodeCmd: './my-node-bin'
+} )
+```
+
+### args
+
+Additional command-line arguments to pass to each spawned process. Default is
+none.
+
+```js
+chug( {
+    args: [ '--my-arg-1', '--my-arg-2' ]
+} )
+```
 
 ## See also
 
