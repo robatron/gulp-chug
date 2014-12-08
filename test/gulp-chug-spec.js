@@ -1,8 +1,11 @@
+'use strict';
+
 /**
  * gulp-chug test spec file
  *
  * TODO: Use sinon sandboxes to suppress console output from gulp-chug
  */
+
 var util    = require( 'util' );
 var path    = require( 'path' );
 var _       = require( 'lodash' );
@@ -40,7 +43,7 @@ var proxyDeps = {
                 on: _.noop,
                 stdout: { on: _.noop },
                 stderr: { on: _.noop }
-            }
+            };
         }
     },
     './package.json': {
@@ -106,7 +109,7 @@ describe( 'gulp-chug', function () {
             var chug = pequire( CHUG_PATH, pdeps );
             var stream = chug();
             stream.on( 'error', function ( err ) {
-                err.message.should.startWith( ERR_MSG_BEGIN )
+                err.message.should.startWith( ERR_MSG_BEGIN );
                 done();
             } );
             stream.write( streamFile );
@@ -126,7 +129,7 @@ describe( 'gulp-chug', function () {
             var chug = pequire( CHUG_PATH, pdeps );
             var stream = chug();
             stream.on( 'error', function ( err ) {
-                err.message.should.startWith( ERR_MSG_BEGIN )
+                err.message.should.startWith( ERR_MSG_BEGIN );
                 done();
             } );
             stream.write( streamFile );
@@ -137,7 +140,7 @@ describe( 'gulp-chug', function () {
             var chug = pequire( CHUG_PATH, pdeps );
             var stream = chug();
             stream.on( 'error', function ( err ) {
-                err.message.should.startWith( ERR_MSG_BEGIN )
+                err.message.should.startWith( ERR_MSG_BEGIN );
                 done();
             } );
             stream.write( streamFile );
@@ -152,7 +155,7 @@ describe( 'gulp-chug', function () {
                         on: _.noop,
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }
-                    }
+                    };
                 } )
             }
         } );
@@ -182,7 +185,7 @@ describe( 'gulp-chug', function () {
                         on: function ( event, fn ) { if ( event === 'error' ) fn() },
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }
-                    }
+                    };
                 }
             }
         } );
@@ -209,7 +212,7 @@ describe( 'gulp-chug', function () {
                         on: function ( event, fn ) { if ( event === 'exit' ) fn( 1 ) },
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }
-                    }
+                    };
                 }
             }
         } );
@@ -237,7 +240,7 @@ describe( 'gulp-chug', function () {
                         on: _.noop,
                         stdout: { on: stdoutSpy },
                         stderr: { on: stderrSpy }
-                    }
+                    };
                 }
             }
         } );
@@ -270,7 +273,7 @@ describe( 'gulp-chug', function () {
                         },
                         stdout: { on: _.noop },
                         stderr: { on: _.noop }
-                    }
+                    };
                 }
             }
         } );

@@ -1,3 +1,5 @@
+'use strict';
+
 var fs          = require( 'fs' );
 var path        = require( 'path' );
 var util        = require( 'util' );
@@ -95,10 +97,13 @@ module.exports = function ( options ) {
         }
 
         // Find local gulp cli script
+        var localGulpPackage        = null;
+        var localGulpPackageBase    = null;
+        var localGulpCliPath        = null;
         try {
-            var localGulpPackageBase    = path.dirname( resolve.sync( 'gulp', { basedir: gulpfile.base } ) );
-            var localGulpPackage        = require( path.join( localGulpPackageBase, 'package.json' ) );
-            var localGulpCliPath        = path.resolve( path.join( localGulpPackageBase, localGulpPackage.bin.gulp ) );
+            localGulpPackageBase    = path.dirname( resolve.sync( 'gulp', { basedir: gulpfile.base } ) );
+            localGulpPackage        = require( path.join( localGulpPackageBase, 'package.json' ) );
+            localGulpCliPath        = path.resolve( path.join( localGulpPackageBase, localGulpPackage.bin.gulp ) );
         } catch( err ) {
             sayErr( util.format(
                 'Problem finding locally-installed `gulp` for gulpfile %s. ' +
