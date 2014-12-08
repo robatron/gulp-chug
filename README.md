@@ -141,6 +141,17 @@ chug( {
 
 ## Changelog
 
+### 0.4
+
+- Add option to pass additional command-line arguments to each gulpfile
+- Update deps
+
+### 0.3
+
+- Add `nodeCmd` option to choose one's own node binary to spawn
+- Add error handling for spawned processes
+- Update deps
+
 ### 0.2
 
 - Use `child_process.spawn` instead of `child_process.exec` for real-time child gulpfile output (see [exec vs spawn](http://www.hacksparrow.com/difference-between-spawn-and-exec-of-node-js-child_process.html))
