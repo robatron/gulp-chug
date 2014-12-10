@@ -120,9 +120,8 @@ module.exports = function ( options ) {
         var cmd = opts.nodeCmd;
 
         var args = [
-            localGulpCliPath, '--gulpfile', gulpfile.name,
-            opts.tasks.join( ' ' )
-        ];
+            localGulpCliPath, '--gulpfile', gulpfile.name
+        ].concat(opts.tasks);
 
         // Concatinate additional command-line arguments if provided
         if ( _.isArray( opts.args ) || _.isString( opts.args ) ) {
