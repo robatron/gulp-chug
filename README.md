@@ -135,6 +135,42 @@ chug( {
 } )
 ```
 
+### output
+
+Change output of `gulp-chug`
+
+```js
+var util = require( 'util' );
+var gutil = require( 'gulp-util' );
+
+
+// Default
+chug( {
+    output: function( data , scope) {
+        scope.say( util.format( '(%s) %s',
+            gutil.colors.magenta( scope.gulpfile.relPath ),
+            data.toString()
+        ) );
+    }
+} )
+```
+
+Properties of scope.gulpfile
+
+```js
+scope.gulpfile = {
+    path        : // absolute path to source Gulpfile
+    origPath    : // absolute path to source Gulpfile
+    origRelPath : // relative path to source Gulpfile
+    relPath     : // relative path to temp Gulpfile
+    tmpPath     : // absolute path to temp Gulpfile
+    base        : // absolute path to directory of source Gulpfile
+    relBase     : // relative path to directory of source Gulpfile
+    name        : // name of temp Gulpfile
+    ext         : '.js'
+};
+```
+
 ## See also
 
 - [gulp-hub](https://github.com/frankwallis/gulp-hub) - Load tasks from other gulpfiles
