@@ -30,13 +30,15 @@
     "through2": "1.1.1"
   },
   "devDependencies": {
-    "proxyquire": "~1.0.1",
-    "sinon": "~1.10.2",
-    "mocha": "~1.20.1",
-    "should": "~4.0.1",
-    "gulp-util": "~2.2.16",
+    "gulp": "^3.8.10",
+    "gulp-istanbul": "^0.6.0",
+    "gulp-mocha": "^2.0.0",
     "gulp-replace": "~0.3.0",
-    "gulp": "~3.7.0"
+    "gulp-util": "~2.2.16",
+    "mocha": "~1.20.1",
+    "proxyquire": "~1.0.1",
+    "should": "~4.0.1",
+    "sinon": "~1.10.2"
   },
   "scripts": {
     "test": "mocha test/gulp-chug-spec.js && gulp --gulpfile test/gulp-chug-integrate.js",
