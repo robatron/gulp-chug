@@ -41,7 +41,7 @@
     "sinon": "~1.10.2"
   },
   "scripts": {
-    "test": "mocha test/gulp-chug-spec.js && gulp --gulpfile test/gulp-chug-integrate.js",
+    "test": "gulp --gulpfile test/gulp-chug-integrate.js && gulp test",
     "publish-patch": "npm version patch && git push origin master --tags && npm publish"
   }
 }

@@ -7,7 +7,7 @@ gulp.task( 'test', function ( cb ) {
     .pipe( istanbul() )
     .pipe( istanbul.hookRequire() )
         .on( 'finish', function () {
-          gulp.src( 'test/gulp-chug-*.js' )
+          gulp.src( 'test/*-spec.js' )
             .pipe( mocha() )
             .pipe( istanbul.writeReports() )
             .on( 'end', cb );
