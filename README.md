@@ -137,16 +137,15 @@ chug( {
 
 ### output
 
-Change output of `gulp-chug`
+Change default output of `gulp-chug`. `output` must be a function that accepts
+two parameters:
+
+1. `data`, the data from the output event
+2. `scope`, the current gulpfile scope
 
 ```js
-var util = require( 'util' );
-var gutil = require( 'gulp-util' );
-
-
-// Default
 chug( {
-    output: function( data , scope) {
+    output: function( data , scope ) {
         scope.say( util.format( '(%s) %s',
             gutil.colors.magenta( scope.gulpfile.relPath ),
             data.toString()
