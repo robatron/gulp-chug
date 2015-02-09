@@ -154,20 +154,19 @@ chug( {
 } )
 ```
 
-Properties of scope.gulpfile
+Properties of `scope`:
 
 ```js
-scope.gulpfile = {
-    path        : // absolute path to source Gulpfile
-    origPath    : // absolute path to source Gulpfile
-    origRelPath : // relative path to source Gulpfile
-    relPath     : // relative path to temp Gulpfile
-    tmpPath     : // absolute path to temp Gulpfile
-    base        : // absolute path to directory of source Gulpfile
-    relBase     : // relative path to directory of source Gulpfile
-    name        : // name of temp Gulpfile
-    ext         : '.js'
-};
+scope.say:                  // Default logging function for `gulp-chug`
+scope.gulpfile:             // Properties of the current scope's gulpfile
+scope.gulpfile.origPath:    // Absolute path to source Gulpfile
+scope.gulpfile.origRelPath: // Relative path to source Gulpfile
+scope.gulpfile.path:        // Absolute path to temp Gulpfile
+scope.gulpfile.relPath:     // Relative path to temp Gulpfile
+scope.gulpfile.base:        // Absolute path to the base directory of the source gulpfile
+scope.gulpfile.relBase:     // Relative path to the base directory of the source gulpfile
+scope.gulpfile.name:        // Name of temp Gulpfile, sans the extension
+scope.gulpfile.ext:         // Temp gulpfile extention, usually `.js`
 ```
 
 ## See also
