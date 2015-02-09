@@ -30,8 +30,9 @@ module.exports = function ( options ) {
         var opts = _.assign( {
             nodeCmd: 'node',
             tasks: [ 'default' ],
+
             // Log output coming from gulpfile stdout and stderr
-            output: function( data , scope) {
+            output: function( data , scope ) {
                 scope.say( util.format( '(%s) %s',
                     gutil.colors.magenta( scope.gulpfile.relPath ),
                     data.toString()
@@ -168,11 +169,11 @@ module.exports = function ( options ) {
 
         // Handle gulpfile stdout and stderr
         spawnedGulp.stdout.on( 'data', function( data ) {
-            return opts.output (data, self);
-        });
+            return opts.output( data, self );
+        } );
         spawnedGulp.stderr.on( 'data', function( data ) {
-            return opts.output (data, self);
-        });
+            return opts.output( data, self );
+        } );
 
         // Clean up temp gulpfile exit
         spawnedGulp.on( 'exit', function ( exitCode ) {
