@@ -20,7 +20,8 @@ module.exports = function ( options ) {
     var opts = _.assign( {
         nodeCmd: 'node',
         tasks: [ 'default' ],
-		removeDate : false
+		removeDate : false,
+		removeLineBreaks : false
     }, options );
 
     // Create a stream through which each file will pass
@@ -36,6 +37,11 @@ module.exports = function ( options ) {
 		//Function to delete [xx:xx:xx] at the begining of a message
 		var removeDate = function (msg) {
 			return msg.split(/^\[[0-9]+:[0-9]+:[0-9]+\] /).join("");
+		}
+		
+		//Function to remove lines breaks at the end of a message
+		var removeLineBreaks = function (msg) {
+			return msg.split(/\r$|\n$|\r\n$/).join("");
 		}
 
         // Configure logging and errors
@@ -147,6 +153,9 @@ module.exports = function ( options ) {
 			var msg = data.toString();
 			if (opts.removeDate) {
 				msg = removeDate(msg);
+			}
+			if (opts.removeLineBreaks) {
+				msg = removeLineBreaks(msg);
 			}
             say( util.format( '(%s) %s',
                 gutil.colors.magenta( gulpfile.relPath ),
