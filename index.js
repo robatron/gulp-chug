@@ -167,9 +167,9 @@ module.exports = function ( options ) {
 				say( util.format( '(%s) %s',
 					gutil.colors.magenta( gulpfile.relPath ),
 					msg
-				), true );
+				) );
 			} else {
-				say( msg, false );
+				say( msg );
 			}
         };
 
