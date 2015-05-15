@@ -20,6 +20,8 @@ module.exports = function ( options ) {
     var opts = _.assign( {
         nodeCmd: 'node',
         tasks: [ 'default' ],
+		logPackage : true,
+		logScript : true,
 		removeDate : false,
 		removeLineBreaks : false
     }, options );
@@ -46,7 +48,11 @@ module.exports = function ( options ) {
 
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
-            gutil.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+			if (opts.logPackage) {
+				gutil.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+			} else {
+				gutil.log( msg );
+			}
         };
 
         var sayErr = function( errMsg ) {
@@ -157,10 +163,14 @@ module.exports = function ( options ) {
 			if (opts.removeLineBreaks) {
 				msg = removeLineBreaks(msg);
 			}
-            say( util.format( '(%s) %s',
-                gutil.colors.magenta( gulpfile.relPath ),
-                msg
-            ), true );
+			if (opts.logScript) {
+				say( util.format( '(%s) %s',
+					gutil.colors.magenta( gulpfile.relPath ),
+					msg
+				), true );
+			} else {
+				say( msg, false );
+			}
         };
 
         // Remove temp file if one exists
