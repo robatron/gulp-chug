@@ -19,7 +19,8 @@ module.exports = function ( options ) {
     // Set default options
     var opts = _.assign( {
         nodeCmd: 'node',
-        tasks: [ 'default' ]
+        tasks: [ 'default' ],
+		removeDate : false
     }, options );
 
     // Create a stream through which each file will pass
@@ -31,6 +32,11 @@ module.exports = function ( options ) {
         // Since we're not modifying the gulpfile, always push it back on the
         // stream.
         self.push( file );
+		
+		//Function to delete [xx:xx:xx] at the begining of a message
+		var removeDate = function (msg) {
+			return msg.split(/^\[[0-9]+:[0-9]+:[0-9]+\] /).join("");
+		}
 
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
@@ -138,9 +144,13 @@ module.exports = function ( options ) {
 
         // Log output coming from gulpfile stdout and stderr
         var logGulpfileOutput = function ( data ) {
+			var msg = data.toString();
+			if (opts.removeDate) {
+				msg = removeDate(msg);
+			}
             say( util.format( '(%s) %s',
                 gutil.colors.magenta( gulpfile.relPath ),
-                data.toString()
+                msg
             ), true );
         };
 
