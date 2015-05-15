@@ -19,7 +19,11 @@ module.exports = function ( options ) {
     // Set default options
     var opts = _.assign( {
         nodeCmd: 'node',
-        tasks: [ 'default' ]
+        tasks: [ 'default' ],
+		logPackage : true,
+		logScript : true,
+		removeDate : false,
+		removeLineBreaks : false
     }, options );
 
     // Create a stream through which each file will pass
@@ -31,11 +35,24 @@ module.exports = function ( options ) {
         // Since we're not modifying the gulpfile, always push it back on the
         // stream.
         self.push( file );
+		
+		//Function to delete [xx:xx:xx] at the begining of a message
+		var removeDate = function (msg) {
+			return msg.split(/^\[[0-9]+:[0-9]+:[0-9]+\] /).join("");
+		}
+		
+		//Function to remove lines breaks at the end of a message
+		var removeLineBreaks = function (msg) {
+			return msg.split(/\r$|\n$|\r\n$/).join("");
+		}
 
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
-            var sayFn = noNewLine ? util.print : console.log;
-            sayFn( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+			if (opts.logPackage) {
+				gutil.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+			} else {
+				gutil.log( msg );
+			}
         };
 
         var sayErr = function( errMsg ) {
@@ -139,10 +156,21 @@ module.exports = function ( options ) {
 
         // Log output coming from gulpfile stdout and stderr
         var logGulpfileOutput = function ( data ) {
-            say( util.format( '(%s) %s',
-                gutil.colors.magenta( gulpfile.relPath ),
-                data.toString()
-            ), true );
+			var msg = data.toString();
+			if (opts.removeDate) {
+				msg = removeDate(msg);
+			}
+			if (opts.removeLineBreaks) {
+				msg = removeLineBreaks(msg);
+			}
+			if (opts.logScript) {
+				say( util.format( '(%s) %s',
+					gutil.colors.magenta( gulpfile.relPath ),
+					msg
+				) );
+			} else {
+				say( msg );
+			}
         };
 
         // Remove temp file if one exists
