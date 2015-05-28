@@ -73,7 +73,7 @@ module.exports = function ( options ) {
             say( 'File is a buffer. Need to write buffer to temp file...' );
 
             var tmpGulpfileName = util.format(
-                '%s.tmp.%s%s',
+                '%s-tmp-%s%s',
                 path.basename( gulpfile.name, gulpfile.ext ),
                 new Date().getTime(),
                 gulpfile.ext
