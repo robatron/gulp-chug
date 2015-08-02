@@ -152,7 +152,7 @@ gulp.task( 'default', function () {
 } );
 ```
 
-In compbination with gulp chug options:
+In combination with gulp chug options:
 
 ```js
 var gulp = require( 'gulp' );
