@@ -14,13 +14,21 @@ var PluginError = gutil.PluginError;
 var PKG         = require( './package.json' );
 
 // Primary gulp function
-module.exports = function ( options ) {
+module.exports = function ( options, cb ) {
+
+    if ( typeof options !== 'object' ) {
+        cb = options;
+        options = {};
+    }
 
     // Set default options
     var opts = _.assign( {
         nodeCmd: 'node',
         tasks: [ 'default' ]
     }, options );
+
+    // Callback
+    cb = cb || function () {};
 
     // Create a stream through which each file will pass
     return through.obj( function ( file, enc, callback ) {
@@ -185,6 +193,9 @@ module.exports = function ( options ) {
             }
 
             callback();
+
+            // Run user callback
+            cb();
         } );
 
         // Clean up temp gulpfile if on ctrl + c
