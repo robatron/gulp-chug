@@ -34,8 +34,7 @@ module.exports = function ( options ) {
 
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
-            var sayFn = noNewLine ? gutil.log : console.log;
-            sayFn( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+            console.log( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
         };
 
         var sayErr = function( errMsg ) {
