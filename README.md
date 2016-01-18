@@ -137,7 +137,8 @@ chug( {
 
 ## Callback
 
-You can pass a callback function to gulp chug that will be executed after external gulpfile has finished running.
+You can pass a callback function to gulp chug that will be executed after the
+external gulpfile has finished running.
 
 ```js
 var gulp = require( 'gulp' );
@@ -152,7 +153,7 @@ gulp.task( 'default', function () {
 } );
 ```
 
-In combination with gulp chug options:
+In combination with gulp-chug options:
 
 ```js
 var gulp = require( 'gulp' );
