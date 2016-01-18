@@ -14,10 +14,11 @@ var PluginError = gutil.PluginError;
 var PKG         = require( './package.json' );
 
 // Primary gulp function
-module.exports = function ( options, cb ) {
+module.exports = function ( options, userCallback ) {
 
-    if ( typeof options !== 'object' ) {
-        cb = options;
+    // Consider `options` the callback if it's a function
+    if ( _.isFunction( options ) ) {
+        userCallback = options;
         options = {};
     }
 
@@ -27,8 +28,8 @@ module.exports = function ( options, cb ) {
         tasks: [ 'default' ]
     }, options );
 
-    // Callback
-    cb = cb || function () {};
+    // Set the callback to a noop if it's not a function
+    userCallback = _.isFunction( userCallback ) ? userCallback : _.noop
 
     // Create a stream through which each file will pass
     return through.obj( function ( file, enc, callback ) {
@@ -192,10 +193,11 @@ module.exports = function ( options, cb ) {
                 ) );
             }
 
+            // Run the stream callback
             callback();
 
             // Run user callback
-            cb();
+            userCallback();
         } );
 
         // Clean up temp gulpfile if on ctrl + c
