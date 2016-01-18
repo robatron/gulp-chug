@@ -24,21 +24,21 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "gulp-util": "3.0.1",
-    "lodash": "2.4.1",
-    "resolve": "1.0.0",
-    "through2": "1.1.1"
+    "gulp-util": "^3.0.7",
+    "lodash": "^4.0.0",
+    "resolve": "^1.1.6",
+    "through2": "^2.0.0"
   },
   "devDependencies": {
-    "gulp": "^3.8.10",
-    "gulp-istanbul": "^0.6.0",
-    "gulp-mocha": "^2.0.0",
-    "gulp-replace": "~0.3.0",
-    "gulp-util": "~2.2.16",
-    "mocha": "~1.20.1",
-    "proxyquire": "~1.0.1",
-    "should": "~4.0.1",
-    "sinon": "~1.10.2"
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-mocha": "^2.2.0",
+    "gulp-replace": "^0.5.4",
+    "gulp-util": "^3.0.7",
+    "mocha": "^2.3.4",
+    "proxyquire": "^1.7.3",
+    "should": "^8.1.1",
+    "sinon": "^1.17.2"
   },
   "scripts": {
     "test": "gulp --gulpfile test/gulp-chug-integrate.js && gulp test",
