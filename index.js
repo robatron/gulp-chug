@@ -43,8 +43,12 @@ module.exports = function ( options, userCallback ) {
 
         // Configure logging and errors
         var say = function( msg, noNewLine ) {
-            var sayFn = noNewLine ? util.print : console.log;
-            sayFn( util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg );
+            if ( !noNewLine ) {
+                return console.log(
+                    util.format( '[%s]', gutil.colors.green( PKG.name ) ), msg
+                );
+            }
+            process.stdout.write( util.format( '[%s]', gutil.colors.green( PKG.name ) ) + ' ' + msg )
         };
 
         var sayErr = function( errMsg ) {
