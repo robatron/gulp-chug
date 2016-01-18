@@ -271,7 +271,7 @@ describe( 'gulp-chug', function () {
         ).should.be.true;
     } );
 
-    it.only( 'supports a callback to be executed after the target gulpfile has completed executing', function () {
+    it( 'supports a callback to be executed after the target gulpfile has completed executing', function () {
         var cbSpy = sinon.spy();
 
         var pdeps = getProxyDeps( {
