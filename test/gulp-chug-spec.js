@@ -268,7 +268,7 @@ describe( 'gulp-chug', function () {
                 'default', 'fake-arg-2', 'fake-arg-3'
             ],
             { cwd: 'path-dirname-return' }
-        ).should.be.true;
+        ).should.be.true();
     } );
 
     it( 'supports a callback to be executed after the target gulpfile has completed executing', function () {
@@ -388,10 +388,10 @@ describe( 'gulp-chug', function () {
         };
         stream.write( streamFile );
 
-        stdoutSpy.calledOnce.should.be.true;
-        stdoutSpy.calledWith( 'data' ).should.be.true;
-        stderrSpy.calledOnce.should.be.true;
-        stderrSpy.calledWith( 'data' ).should.be.true;
+        stdoutSpy.calledOnce.should.be.true();
+        stdoutSpy.calledWith( 'data' ).should.be.true();
+        stderrSpy.calledOnce.should.be.true();
+        stderrSpy.calledWith( 'data' ).should.be.true();
     } );
 
     it( 'cleans up any temporary gulpfiles on exit', function () {
@@ -420,7 +420,7 @@ describe( 'gulp-chug', function () {
             isBuffer:   function () { return true }
         };
         stream.write( streamFile );
-        pdeps.fs.unlinkSync.calledOnce.should.be.true;
-        pdeps.fs.unlinkSync.calledWith( 'path-join-return' ).should.be.true;
+        pdeps.fs.unlinkSync.calledOnce.should.be.true();
+        pdeps.fs.unlinkSync.calledWith( 'path-join-return' ).should.be.true();
     } );
 } );
