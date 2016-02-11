@@ -151,12 +151,29 @@ module.exports = function ( options, userCallback ) {
         var spawnedGulp = spawn( cmd, args, { cwd: gulpfile.base } );
 
         // Log output coming from gulpfile stdout and stderr
-        var logGulpfileOutput = function ( data ) {
-            say( util.format( '(%s) %s',
-                gutil.colors.magenta( gulpfile.relPath ),
-                data.toString()
-            ), true );
-        };
+        var logGulpfileOutput = (function(){
+
+            // Should prefix next output.
+            var newline = true;
+
+            return function ( data ) {
+                var output = data.toString();
+                if (newline) {
+                    say( util.format( '(%s) %s',
+                        gutil.colors.magenta( gulpfile.relPath ),
+                        output
+                    ), true );
+                } else {
+                    process.stdout.write(output)
+                }
+
+                // If this batch of gulpfile output didn't terminate a
+                // line, we'll just pass the next batch through.
+                // This allows tasks that show progress (such as tests) to
+                // write partial lines without us splitting them up.
+                newline = output.substr(-1) === '\n';
+            }
+        })();
 
         // Remove temp file if one exists
         var cleanupTmpFile = function () {
